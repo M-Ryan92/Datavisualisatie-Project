@@ -19,6 +19,10 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
         $routeProvider.when('/', {
             templateUrl: 'view/app.html'
         })
+                .when('/example', {
+                    templateUrl: 'view/example.html',
+                    resolve: requireCtrl('ExampleController')
+                })
                 .otherwise({
                     redirectTo: "/"
                 });
