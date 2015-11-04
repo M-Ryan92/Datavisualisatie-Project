@@ -1,2 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/datavisProject"/>
+<Context antiJARLocking="true" path="/datavisProject">
+
+  <Resource name="jdbc/mkyongdb" auth="Container" type="javax.sql.DataSource"
+               maxActive="50" maxIdle="30" maxWait="10000"
+               username="Yavuz2datavis" password="qwe123456" 
+               driverClassName="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://185.41.126.25:9150/Yavuz2datavis_db">
+  </Resource>
+<!--  <Resource name="jdbc/mkyongdb" auth="Container" type="javax.sql.DataSource"
+               maxActive="50" maxIdle="30" maxWait="10000"
+               username="datavis_db" password="761bzi" 
+               driverClassName="com.mysql.jdbc.Driver"
+               url="jdbc:mysql://31.151.127.234:3306/datavis_db"/>-->
+
+</Context>
