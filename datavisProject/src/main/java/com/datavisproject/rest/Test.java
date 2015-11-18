@@ -1,17 +1,15 @@
 package com.datavisproject.rest;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import com.datavisproject.db.Kleinverbruik;
+import com.datavisproject.util.JsonHelper;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Statement;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-
+import javax.ws.rs.PathParam;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -19,42 +17,33 @@ import org.codehaus.jettison.json.JSONObject;
 @Path("test")
 public class Test {
 
-    private DataSource ds;
+    private EntityManager em;
 
     public Test() {
-        try {
-            ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/mkyongdb");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
+        em = Persistence.createEntityManagerFactory("datavis").createEntityManager();
     }
-        @GET
-        public String test() throws JSONException {
-            JSONObject json = new JSONObject();
-            JSONArray arr = new JSONArray();
-            arr.put("hello world");
-            arr.put("creepy-octo-lamp");
 
-            json.put("my projects", arr);
-            return json.toString();
-        }
+    @GET
+    public String test() throws JSONException {
+        JSONObject json = new JSONObject();
+        JSONArray arr = new JSONArray();
+        arr.put("hello world");
+        arr.put("creepy-octo-lamp");
 
-        @Path("db")
-        @GET
-        public String dbTest() throws SQLException, JSONException {
-            JSONArray arr = new JSONArray();
-            Connection connection1 = ds.getConnection();
-            Statement stmt = connection1.createStatement();
-            
-            String query = "SELECT page_title FROM yavuz2datavis_db.page where page_title like 'Chicago%sky%';";
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                String _result = rs.getString(1);
-                arr.put(_result);
-            }
-
-            JSONObject ob = new JSONObject();
-            ob.put("Chicago", arr);
-            return ob.toString();
-        }
+        json.put("my projects", arr);
+        return json.toString();
     }
+    
+    @Path("db/{page}")
+    @GET
+    public String dbTest(@PathParam("page") Integer page) throws SQLException, JSONException, IOException {
+        javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+        cq.select(cq.from(Kleinverbruik.class));
+        javax.persistence.Query q = em.createQuery(cq);
+        q.setMaxResults(10 - 0 + 1);
+        q.setFirstResult(page);
+        List<Kleinverbruik> res = q.getResultList();
+
+        return "{" + JsonHelper.createJsonArray("results", res) + "}";
+    }
+}
