@@ -175,5 +175,20 @@ public class Test {
 		return _ret;
 	}
 	
+	@Path("elk/ranges/{year}")
+	@GET
+	public String getElkRangesByYear(@PathParam("year") String year) throws SQLException, JSONException, IOException {
+		Map<String, String> ranges = new HashMap<>();
+		ranges= Statistic.getElkUsageRangeList(year);
+		String _ret = "";
+		Iterator it = ranges.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry pair = (Map.Entry)it.next();
+	        _ret += pair.getKey() + " = " + pair.getValue() + " <br>";
+	        it.remove(); // avoids a ConcurrentModificationException
+		}
+		return _ret;
+	}
+	
 	
 }
