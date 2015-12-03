@@ -7,10 +7,26 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class JsonHelper {
 
+    public static String createJsonObject(Map<String, String> items) throws IOException {
+        String jsonObject = "{";
+        int itemRef = 0;
+        for (String key : items.keySet()) {
+            jsonObject += "\""+key + "\":" + items.get(key);
+
+            if (items.size() - 1 > itemRef) {
+                jsonObject += ",";
+            }
+            itemRef++;
+        }
+        jsonObject += "}";
+        return jsonObject;
+    }
+
     public static String createJsonArray(Map<?, ?> map) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(map);
     }
+
     public static String createJsonArray(List list) throws IOException {
         String jsonArray = "[";
         ObjectMapper mapper = new ObjectMapper();

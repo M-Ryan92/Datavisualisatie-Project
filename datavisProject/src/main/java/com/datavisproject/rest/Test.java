@@ -199,14 +199,19 @@ public class Test {
         long[] range0 = {min, min + diff - 1};
         long[] range1 = {min + diff, max - diff - 1};
         long[] range2 = {max - diff, max};
-        List<Long[]> rangeList = new ArrayList() {
+        Map<String,Long[]> rangeList = new HashMap() {
             {
-                add(range0);
-                add(range1);
-                add(range2);
+                put("#BFBF3F",range0);
+                put("#BF7F3F",range1);
+                put("#BF3F3F",range2);
             }
         };
-        return JsonHelper.createJsonArray(rangeList);
+        Map<String, Long> elkUsageHashListByYear1 = Statistic.getElkUsageHashListByYear(year);
+        
+        return JsonHelper.createJsonObject(new HashMap<String,String>(){{
+            put("range", JsonHelper.createJsonArray(rangeList));
+            put("usage", JsonHelper.createJsonArray(elkUsageHashListByYear1));
+        }});
     }
     @Path("testmap")
     @Produces(MediaType.APPLICATION_JSON)

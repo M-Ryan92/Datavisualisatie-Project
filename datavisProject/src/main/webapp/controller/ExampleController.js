@@ -3,32 +3,18 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200;
     self.scale = 6500;
-    //"#7FBF3F",
-    self.cols = ["#BFBF3F", "#BF7F3F", "#BF3F3F"];
 
     self.init = function () {
         $http({
             method: 'GET',
-            url: 'resources/test/testranges/2012'
+            url: 'resources/test/testranges/2014'
         }).then(function successCallback(response) {
-            self.range = response.data;
-            console.log(self.range);
-        }, function errorCallback(response) {
-            console.log("oh no it went wong =C!");
-        });
-
-        $http({
-            method: 'GET',
-            url: 'resources/test/elk/year/2012'
-        }).then(function successCallback(response) {
-            self.usage = response.data;
-            console.log(self.usage);
+            self.range = response.data.range;
+            self.usage = response.data.usage;
             self.draw();
         }, function errorCallback(response) {
             console.log("oh no it went wong =C!");
         });
-
-
     };
 
     self.draw = function () {
@@ -62,15 +48,15 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                         return d.properties.postcode;
                     })
                     .attr("fill", function (d) {
+                        var col = d.properties.fill;
                         if (self.usage[d.properties.postcode] !== null) {
-                            for (i = 0; i < self.range.length; i++) {
-                                if (self.usage[d.properties.postcode] >= self.range[i][0] && self.usage[d.properties.postcode] <= self.range[i][1]) {
-                                    console.log(self.cols[1]);
-                                    return self.cols[i];
+                            Object.keys(self.range).forEach(function(key){
+                                if (self.usage[d.properties.postcode] >= self.range[key][0] && self.usage[d.properties.postcode] <= self.range[key][1]) {
+                                    col = key;
                                 }
-                            }
+                            });
                         }
-                        return d.properties.fill;
+                        return col;
                     })
                     .attr("stroke-width", function (d) {
                         return d.properties['stroke-width'];
