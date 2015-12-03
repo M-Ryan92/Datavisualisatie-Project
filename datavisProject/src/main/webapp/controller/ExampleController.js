@@ -1,10 +1,37 @@
 app.registerCtrl('ExampleController', function ($scope, $http) {
-
+    var self = this;
     var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 300;
-    this.scale = 6000;
+    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200;
+    self.scale = 6500;
+    //"#7FBF3F",
+    self.cols = ["#BFBF3F", "#BF7F3F", "#BF3F3F"];
 
-    this.draw = function () {
+    self.init = function () {
+        $http({
+            method: 'GET',
+            url: 'resources/test/testranges/2012'
+        }).then(function successCallback(response) {
+            self.range = response.data;
+            console.log(self.range);
+        }, function errorCallback(response) {
+            console.log("oh no it went wong =C!");
+        });
+
+        $http({
+            method: 'GET',
+            url: 'resources/test/elk/year/2012'
+        }).then(function successCallback(response) {
+            self.usage = response.data;
+            console.log(self.usage);
+            self.draw();
+        }, function errorCallback(response) {
+            console.log("oh no it went wong =C!");
+        });
+
+
+    };
+
+    self.draw = function () {
         var projection = d3.geo.mercator()
                 .scale(this.scale)
                 .translate([width / 2, height / 2]);
@@ -16,6 +43,43 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
 
         var path = d3.geo.path()
                 .projection(projection);
+
+        var g = svg.append("g");
+
+        d3.json("map.json", function (error, nld) {
+            nld.features.forEach(function (feature) {
+                feature.geometry.coordinates.forEach(function (coords) {
+                    coords.reverse();
+                });
+            });
+            projection.center([(nld.bbox[0] + nld.bbox[2]) / 2, (nld.bbox[1] + nld.bbox[3]) / 2]);
+            g.selectAll("path")
+                    .data(nld.features)
+                    .enter()
+                    .append("path")
+                    .attr("class", "boundary")
+                    .attr("id", function (d) {
+                        return d.properties.postcode;
+                    })
+                    .attr("fill", function (d) {
+                        if (self.usage[d.properties.postcode] !== null) {
+                            for (i = 0; i < self.range.length; i++) {
+                                if (self.usage[d.properties.postcode] >= self.range[i][0] && self.usage[d.properties.postcode] <= self.range[i][1]) {
+                                    console.log(self.cols[1]);
+                                    return self.cols[i];
+                                }
+                            }
+                        }
+                        return d.properties.fill;
+                    })
+                    .attr("stroke-width", function (d) {
+                        return d.properties['stroke-width'];
+                    })
+                    .attr("stroke", function (d) {
+                        return d.properties.stroke;
+                    })
+                    .attr("d", path);
+        });
 
         var m0, o0;
 
@@ -38,34 +102,6 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     d3.selectAll("path").attr("d", path);
                 });
 
-        var g = svg.append("g");
-        d3.json("map.json", function (error, nld) {
-            nld.features.forEach(function (feature) {
-                feature.geometry.coordinates.forEach(function (coords) {
-                    coords.reverse();
-                });
-            });
-            projection.center([(nld.bbox[0] + nld.bbox[2]) / 2, (nld.bbox[1] + nld.bbox[3]) / 2]);
-            g.selectAll("path")
-                    .data(nld.features)
-                    .enter()
-                    .append("path")
-                    .attr("class", "boundary")
-                    .attr("id", function (d) {
-                        return d.properties.postcode;
-                    })
-                    .attr("fill", function (d) {
-                        return d.properties.fill;
-                    })
-                    .attr("stroke-size", function (d) {
-                        return d.properties.stroke - width;
-                    })
-                    .style("stroke", function (d) {
-                        return d.properties.stroke;
-                    })
-                    .attr("d", path);
-        });
-
         var zoom = d3.behavior.zoom()
                 .on("zoom", function () {
                     g.attr("transform", "translate(" +
@@ -74,6 +110,8 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                             .attr("d", path.projection(projection));
                 });
 
-        svg.call(zoom)
+        svg.call(zoom);
     };
+
+    self.init();
 });
