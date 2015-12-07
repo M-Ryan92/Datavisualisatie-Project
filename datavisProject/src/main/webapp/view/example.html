@@ -1,12 +1,17 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-12"><h1>EXAMPLE YAY !!!</h1></div>
-        <div class="col-md-12">
+        <div class="col-md-12"><h1>Energiemaatschappij concurrentie</h1></div>
+        <div class="col-md-4">
             <div ng-controller="ExampleController as ctrl">
-                <select ng-model="selectedYear" ng-change="onYearChange(selectedYear)">
-                    <option >Select a year...</option>
+                <select class="form-control" ng-model="selectedYear" ng-change="onYearChange(selectedYear)">
+                    <option>Select a year...</option>
                     <option ng-repeat="year in years">{{year}}</option>
                 </select>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="map">
+
             </div>
         </div>
 
