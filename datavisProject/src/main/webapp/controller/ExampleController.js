@@ -4,17 +4,28 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200;
     self.scale = 6500;
 
-    self.init = function () {
+    $scope.years = [2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2015];
+
+    $scope.onYearChange = function (year) {
+        self.requestData(year);
+    };
+
+    self.requestData = function (year) {
         $http({
             method: 'GET',
-            url: 'resources/test/testranges/2014'
+            url: 'resources/test/testranges/' + year
         }).then(function successCallback(response) {
+            console.log(response);
             self.range = response.data.range;
             self.usage = response.data.usage;
             self.draw();
         }, function errorCallback(response) {
             console.log("oh no it went wong =C!");
         });
+    };
+
+    self.init = function () {
+        self.requestData(2015);
     };
 
     self.draw = function () {
@@ -50,7 +61,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
                         if (self.usage[d.properties.postcode] !== null) {
-                            Object.keys(self.range).forEach(function(key){
+                            Object.keys(self.range).forEach(function (key) {
                                 if (self.usage[d.properties.postcode] >= self.range[key][0] && self.usage[d.properties.postcode] <= self.range[key][1]) {
                                     col = key;
                                 }

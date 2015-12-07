@@ -2,8 +2,13 @@
     <div class="row">
         <div class="col-md-12"><h1>EXAMPLE YAY !!!</h1></div>
         <div class="col-md-12">
-            <div ng-controller="ExampleController as ctrl"></div>
+            <div ng-controller="ExampleController as ctrl">
+                <select ng-model="selectedYear" ng-change="onYearChange(selectedYear)">
+                    <option >Select a year...</option>
+                    <option ng-repeat="year in years">{{year}}</option>
+                </select>
+            </div>
         </div>
+
     </div>
-    
 </div>
