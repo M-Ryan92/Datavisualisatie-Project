@@ -1,14 +1,13 @@
 app.registerCtrl('ExampleController', function ($scope, $http) {
     var self = this;
-    var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * .5;
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200;
-    self.scale = 6500;
+    self.scale = 5400;
 
     $scope.years = [2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2015];
-
-    $scope.onYearChange = function (year) {
-        self.requestData(year);
-    };
+            $scope.onYearChange = function (year) {
+                self.requestData(year);
+            };
 
     self.requestData = function (year) {
         $http({
@@ -34,7 +33,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                 .translate([width / 2, height / 2]);
 
         d3.select("svg").remove();
-        var svg = d3.select("body").append("svg")
+        var svg = d3.selectAll(".map").append("svg")
                 .attr("width", width)
                 .attr("height", height);
 
