@@ -1,0 +1,29 @@
+/* COLOR */
+.color-primary-0 { color: #285290 }	/* Main Primary color */
+.color-primary-1 { color: #6687B7 }
+.color-primary-2 { color: #41669D }
+.color-primary-3 { color: #173D76 }
+.color-primary-4 { color: #082A5D }
+
+.rgba-primary-0 { color: rgba( 40, 82,144,1) }	/* Main Primary color */
+.rgba-primary-1 { color: rgba(102,135,183,1) }
+.rgba-primary-2 { color: rgba( 65,102,157,1) }
+.rgba-primary-3 { color: rgba( 23, 61,118,1) }
+.rgba-primary-4 { color: rgba(  8, 42, 93,1) }
+
+
+.navbar-brand{
+    padding-top:8px;
+    margin-right:300px;
+}
+
+.map{
+    position:relative;
+    margin: 20px auto;
+    border: 2px solid #000;
+}
+
+svg{
+    position:relative;
+    width:100%;
+}
