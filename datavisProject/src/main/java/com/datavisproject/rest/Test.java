@@ -64,7 +64,7 @@ public class Test {
 
         return "{" + JsonHelper.createJsonArray(res) + "}";
     }
-
+    /*
     //gets all years and companies
     @Path("elk")
     @GET
@@ -102,7 +102,7 @@ public class Test {
     public String getElksum(@PathParam("page") String postalcode) throws SQLException, JSONException, IOException {
         long elkUsage = -1;
         try {
-            elkUsage = Statistic.getElkUsage(postalcode);
+            //elkUsage = Statistic.getElkUsage(postalcode);
         } catch (Exception e) {
             return "Postcode doesnt exist";
         }
@@ -128,7 +128,7 @@ public class Test {
     public String getElksumByYear(@PathParam("year") String year, @PathParam("postalcode") String postalcode) throws SQLException, JSONException, IOException {
         long elkUsage = -1;
         try {
-            elkUsage = Statistic.getElkUsageByYear(postalcode, year);
+            elkUsage = Statistic.getElkUsage(postalcode, year);
         } catch (Exception e) {
             return "Postcode doesnt exist";
         }
@@ -141,28 +141,50 @@ public class Test {
     public String getGasSumByYear(@PathParam("year") String year, @PathParam("postalcode") String postalcode) throws SQLException, JSONException, IOException {
         long elkUsage = -1;
         try {
-            elkUsage = Statistic.getGasUsageByYear(postalcode, year);
+            elkUsage = Statistic.getGasUsage(postalcode, year);
         } catch (Exception e) {
             return "Postcode doesnt exist";
         }
 
         return "" + elkUsage;
     }
+    
+    @Path("elk/company/{company}/{year}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getElkSumByCompany(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
+    	return JsonHelper.createJsonArray(Statistic.getElkUsageHashListByCompany(company, year));
+    }
+    
+    @Path("gas/company/{company}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getGasSumByCompany(@PathParam("company") String company) throws SQLException, JSONException, IOException {
+    	return JsonHelper.createJsonArray(Statistic.getGasUsageHashListByCompany(company));
+    }
+    
+    @Path("elk/company/{company}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getElkSumByCompany(@PathParam("company") String company) throws SQLException, JSONException, IOException {
+    	return JsonHelper.createJsonArray(Statistic.getElkUsageHashListByCompany(company));
+    }
+    
+    @Path("gas/company/{company}/{year}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getGasSumByCompany(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
+    	return JsonHelper.createJsonArray(Statistic.getGasUsageHashListByCompany(company, year));
+    }
 
     @Path("elk/year/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getElkHashmapByYear(@PathParam("year") String year) throws SQLException, JSONException, IOException {
-//        Map<String, Long> usages = new HashMap<>();
-//        usages = Statistic.getElkUsageHashListByYear(year);
-//        String _ret = "";
-//        Iterator it = usages.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry) it.next();
-//            _ret += pair.getKey() + " = " + pair.getValue() + " <br>";
-//            it.remove(); // avoids a ConcurrentModificationException
-//        }
-        return JsonHelper.createJsonArray(Statistic.getElkUsageHashListByYear(year));
+    	
+    	List usages = Statistic.getElkUsage(year);
+    	
+        return JsonHelper.createJsonArrFromListArr(usages);
     }
 
     @Path("gas/year/{year}")
@@ -234,6 +256,6 @@ public class Test {
             it.remove(); // avoids a ConcurrentModificationException
         }
         return _ret;
-    }
+    }*/
 
 }

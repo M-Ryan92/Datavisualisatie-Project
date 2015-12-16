@@ -3,6 +3,9 @@ package com.datavisproject.util;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class JsonHelper {
@@ -39,4 +42,19 @@ public class JsonHelper {
         }
         return jsonArray;
     }
+    
+    public static String createJsonArrFromListArr(List list) throws JsonGenerationException, JsonMappingException, IOException{
+    	String jsonArr = "[";
+    	ObjectMapper mapper = new ObjectMapper();
+    	for(int i = 0; i < list.size(); i ++){
+    		Object[] _arr = (Object[]) list.get(i);
+    		if(i+1 < list.size()){
+    			jsonArr += "[" + mapper.writeValueAsString(_arr[0]) + "," + mapper.writeValueAsString(_arr[1])  + "]" + ",";
+    		} else {
+    			jsonArr += "[" + mapper.writeValueAsString(_arr[0]) + "," + mapper.writeValueAsString(_arr[1])  + "]" + "]";
+    		}
+    	}
+    	return jsonArr;
+    }
+    
 }
