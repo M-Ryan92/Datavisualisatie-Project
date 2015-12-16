@@ -33,7 +33,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     self.requestData = function (year) {
         $http({
             method: 'GET',
-            url: 'resources/test/testranges/' + year
+            url: 'resources/data/elk/' + year
         }).then(function successCallback(response) {
             console.log(response);
             self.range = response.data.range;
