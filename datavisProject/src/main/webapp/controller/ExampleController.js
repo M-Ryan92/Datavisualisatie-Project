@@ -3,11 +3,32 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * .5;
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200;
     self.scale = 5400;
+    $scope.selectedYear = "Select a year...";
+    $scope.selectedCompany = "Select a energy company...";
+    $scope.companies = ["Liander", "Enexis", "ENDINET"];
+    $scope.onCompanyChange = function (company) {
+        self.requestDataCompany(company);
+    };
+    
+        self.requestDataCompany = function (company) {
+        /*$http({
+            method: 'GET',
+            url: 'resources/test/testranges/' + company
+        }).then(function successCallback(response) {
+            console.log(response);
+            self.range = response.data.range;
+            self.usage = response.data.usage;
+            self.draw();
+        }, function errorCallback(response) {
+            console.log("oh no it went wong =C!");
+        });*/
+    };
+    
 
     $scope.years = [2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2015];
-            $scope.onYearChange = function (year) {
-                self.requestData(year);
-            };
+    $scope.onYearChange = function (year) {
+        self.requestData(year);
+    };
 
     self.requestData = function (year) {
         $http({
