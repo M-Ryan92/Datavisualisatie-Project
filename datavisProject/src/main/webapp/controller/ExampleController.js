@@ -9,23 +9,23 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     $scope.onCompanyChange = function (company) {
         self.requestDataCompany(company);
     };
-    
-        self.requestDataCompany = function (company) {
-        /*$http({
-            method: 'GET',
-            url: 'resources/test/testranges/' + company
-        }).then(function successCallback(response) {
-            console.log(response);
-            self.range = response.data.range;
-            self.usage = response.data.usage;
-            self.draw();
-        }, function errorCallback(response) {
-            console.log("oh no it went wong =C!");
-        });*/
-    };
-    
 
-    $scope.years = [2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2015];
+    self.requestDataCompany = function (company) {
+        /*$http({
+         method: 'GET',
+         url: 'resources/test/testranges/' + company
+         }).then(function successCallback(response) {
+         console.log(response);
+         self.range = response.data.range;
+         self.usage = response.data.usage;
+         self.draw();
+         }, function errorCallback(response) {
+         console.log("oh no it went wong =C!");
+         });*/
+    };
+
+
+    $scope.years = [2009, 2010, 2012, 2013, 2014, 2015];
     $scope.onYearChange = function (year) {
         self.requestData(year);
     };
@@ -56,7 +56,8 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
         d3.select("svg").remove();
         var svg = d3.selectAll(".map").append("svg")
                 .attr("width", width)
-                .attr("height", height);
+                .attr("height", height)
+                .attr("style", "border: 2px solid #000; padding:0px;");
 
         var path = d3.geo.path()
                 .projection(projection);
@@ -95,7 +96,13 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     .attr("stroke", function (d) {
                         return d.properties.stroke;
                     })
-                    .attr("d", path);
+                    .attr("d", path)
+                    .on("mouseover", function (d) {
+                        d3.select("div .tooltiphelper").text("Postcode gebied: " + d.properties.postcode);
+                    })
+                    .on("mouseout", function (d) {
+                        d3.select("div .tooltiphelper").text("");
+                    });
         });
 
         var m0, o0;

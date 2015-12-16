@@ -1,23 +1,24 @@
-<div class="container">
+<div class="container" ng-controller="ExampleController as ctrl">
     <div class="row">
         <div class="col-md-12"><h1>Energiemaatschappij concurrentie</h1></div>
         <div class="col-md-4">
-            <div ng-controller="ExampleController as ctrl">
+            <div>
                 <select class="form-control" ng-model="selectedYear" ng-change="onYearChange(selectedYear)">
                     <option>Select a year...</option>
                     <option ng-repeat="year in years">{{year}}</option>
                 </select>
 
-                <div class="col-md-12 e-maatschappij">
-                    <select class="form-control" ng-model="selectedCompany" ng-change="onCompanyChange(selectedCompany)">
-                        <option>Select a energy company...</option>
-                        <<option ng-repeat="company in companies">{{company}}</option>
-                    </select>
-                </div>
+                <select class="form-control e-maatschappij" ng-model="selectedCompany" ng-change="onCompanyChange(selectedCompany)">
+                    <option>Select a energy company...</option>
+                    <option ng-repeat="company in companies">{{company}}</option>
+                </select>
             </div>
         </div>
         <div class="col-md-8">
-            <div class="map">
+            <div class="col-md-12" style="height: 50px">
+                <h2 class="col-md-12 tooltiphelper" style="text-align: center">hover</h2>
+            </div>
+            <div class="col-md-12 map">
 
             </div>
         </div>

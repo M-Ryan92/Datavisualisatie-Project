@@ -17,11 +17,11 @@
     margin-right:300px;
 }
 
-.map{
+/*.map{
     position:relative;
     margin: 20px auto;
     border: 2px solid #000;
-}
+}*/
 
 svg{
     position:relative;
@@ -29,5 +29,5 @@ svg{
 }
 
 .e-maatschappij{
-    padding:10px 0;
+    margin-top: 10px;
 }
