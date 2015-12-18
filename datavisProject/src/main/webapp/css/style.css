@@ -66,6 +66,7 @@ footer, .push{
 .panel-footer{
     height:100px;
     width:100%;
+    border-radius: 0;
 }
 
 
@@ -90,6 +91,14 @@ footer, .push{
    
 }
 
+.navbar-default {
+    border-radius: 0;
+}
+
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover{
      background-color:transparent;
+}
+
+.spacing {
+    margin-bottom: 10px;
 }

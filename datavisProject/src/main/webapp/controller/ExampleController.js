@@ -1,35 +1,26 @@
 app.registerCtrl('ExampleController', function ($scope, $http) {
     var self = this;
     var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * .5;
-    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200;
+    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200 - 170;
     self.scale = 5400;
 
     $scope.years = [2009, 2010, 2012, 2013, 2014, 2015];
     $scope.selectedYear = "Select a year...";
 
     $scope.selectedCompany = "Select a energy company...";
-    $scope.companies = ["Liander", "Enexis", "ENDINET"];
+    $scope.companies = ["Liander", "Enexis", "Endinet"];
 
-    $scope.onCompanyChange = function (company) {
-        self.requestDataCompany(company);
-    };
-
-    self.requestDataCompany = function (company) {
-        /*$http({
-         method: 'GET',
-         url: 'resources/test/testranges/' + company
-         }).then(function successCallback(response) {
-         console.log(response);
-         self.range = response.data.range;
-         self.usage = response.data.usage;
-         self.draw();
-         }, function errorCallback(response) {
-         console.log("oh no it went wong =C!");
-         });*/
-    };
-
-    $scope.onYearChange = function (year) {
-        self.requestData(year);
+    self.requestData = function (year, company) {
+        $http({
+            method: 'GET',
+            url: 'resources/data/elk/' + company + '/' + year
+        }).then(function successCallback(response) {
+            console.log(response);
+            self.usagescale = response.data.usagescale;
+            self.draw();
+        }, function errorCallback(response) {
+            console.log("oh no it went wong =C!");
+        });
     };
 
     self.requestData = function (year) {
@@ -39,15 +30,36 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
-            //self.usage = response.data.usage;
             self.draw();
         }, function errorCallback(response) {
             console.log("oh no it went wong =C!");
         });
     };
 
+    $scope.onYearChange = function (year) {
+        $scope.selectedYear = year;
+        
+        if ($scope.selectedCompany === "Select a energy company...") {
+            console.log("filter year: " + year + ", comp: all");
+            self.requestData(year);
+        } else {
+            console.log("filter year: " + year + ", comp: " + $scope.selectedCompany);
+            self.requestData(year, $scope.selectedCompany);
+        }
+    };
+
+    $scope.onCompanyChange = function (company) {
+        $scope.selectedCompany = company;
+        if($scope.selectedYear !== "Select a year..."){
+            self.requestDataCompany($scope.selectedYear, company);
+        } else {
+            alert("Pleas select a year");
+        }
+        
+    };
+
     self.init = function () {
-        self.requestData(2015);
+        self.requestData(0);
     };
 
     self.draw = function () {
@@ -83,7 +95,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
-                        if(self.usagescale.hasOwnProperty(d.properties.postcode)){
+                        if (self.usagescale.hasOwnProperty(d.properties.postcode)) {
                             col = self.usagescale[d.properties.postcode];
                         }
                         return col;
@@ -98,7 +110,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     .on("mouseover", function (d) {
                         d3.select("div .tooltiphelper").text("Postcode gebied: " + d.properties.postcode);
                         var element = d3.selectAll("path[id='" + d.properties.postcode + "']");
-                        
+
                         element.style("opacity", .8);
                         element.attr("stroke-width", 0);
                     })
