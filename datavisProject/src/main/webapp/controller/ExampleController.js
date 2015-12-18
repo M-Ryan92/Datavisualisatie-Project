@@ -11,6 +11,8 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     $scope.companies = ["Liander", "Enexis", "Endinet"];
 
     self.requestData = function (year, company) {
+        d3.select(".map").append("div")
+                .attr("class","spinner");
         $http({
             method: 'GET',
             url: 'resources/data/elk/' + company + '/' + year
@@ -21,9 +23,12 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
         }, function errorCallback(response) {
             console.log("oh no it went wong =C!");
         });
+        d3.select(".spinnerwinner").remove();
     };
 
     self.requestData = function (year) {
+        d3.select(".map").append("div")
+                .attr("class","spinner");
         $http({
             method: 'GET',
             url: 'resources/data/elk/' + year
@@ -34,6 +39,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
         }, function errorCallback(response) {
             console.log("oh no it went wong =C!");
         });
+        d3.select(".spinnerwinner").remove();
     };
 
     $scope.onYearChange = function (year) {
