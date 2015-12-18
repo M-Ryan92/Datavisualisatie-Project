@@ -83,6 +83,9 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
+                        if(self.usage[d.properties.postcode] != null){
+                            col = self.usage[d.properties.postcode];
+                        }
 //                        if (self.usage[d.properties.postcode] !== null) {
 //                            Object.keys(self.range).forEach(function (key) {
 //                                if (self.usage[d.properties.postcode] >= self.range[key][0] && self.usage[d.properties.postcode] <= self.range[key][1]) {
@@ -103,7 +106,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                         d3.select("div .tooltiphelper").text("Postcode gebied: " + d.properties.postcode);
                         var element = d3.selectAll("path[id='" + d.properties.postcode + "']");
                         
-                        element.style("opacity", .5);
+                        element.style("opacity", .8);
                         element.attr("stroke-width", 0);
                     })
                     .on("mouseout", function (d) {
