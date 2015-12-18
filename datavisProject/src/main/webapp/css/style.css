@@ -17,18 +17,13 @@
     margin-right:300px;
 }
 
-/*.map{
-    position:relative;
-    margin: 20px auto;
-    border: 2px solid #000;
-}*/
-
 svg{
     position:relative;
     width:100%;
 }
 .datavisProjectBase {
     background: firebrick;
+    color: blanchedalmond;
 }
 .datavisPannel {
     background: #ecf3ff;
