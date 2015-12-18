@@ -38,8 +38,8 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
             url: 'resources/data/elk/' + year
         }).then(function successCallback(response) {
             console.log(response);
-            self.range = response.data.range;
-            self.usage = response.data.usage;
+            self.usagescale = response.data.usagescale;
+            //self.usage = response.data.usage;
             self.draw();
         }, function errorCallback(response) {
             console.log("oh no it went wong =C!");
@@ -83,16 +83,9 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
-                        if(self.usage[d.properties.postcode] != null){
-                            col = self.usage[d.properties.postcode];
+                        if(self.usagescale.hasOwnProperty(d.properties.postcode)){
+                            col = self.usagescale[d.properties.postcode];
                         }
-//                        if (self.usage[d.properties.postcode] !== null) {
-//                            Object.keys(self.range).forEach(function (key) {
-//                                if (self.usage[d.properties.postcode] >= self.range[key][0] && self.usage[d.properties.postcode] <= self.range[key][1]) {
-//                                    col = key;
-//                                }
-//                            });
-//                        }
                         return col;
                     })
                     .attr("stroke-width", function (d) {

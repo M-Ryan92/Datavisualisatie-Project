@@ -19,40 +19,31 @@ import org.codehaus.jettison.json.JSONException;
 @Path("data")
 public class RestServices {
 
-    private EntityManager em;
-
-    public RestServices() {
-        em = Persistence.createEntityManagerFactory("datavis").createEntityManager();
-    }
-
     @Path("elk/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getElkUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
-    	
-    	Map<String, Long> usages = Statistic.getElkUsage(year);
-    	//usages = Statistic.calculateScale(usages);
-    	
-//    	return JsonHelper.createJsonObject(new HashMap<String,String>(){{
-//            put("range", JsonHelper.createJsonArray(rangeList));
-//            put("usage", JsonHelper.createJsonArray(elkUsageHashListByYear1));
-//        }});
+
+        Map<String, Long> usages = Statistic.getElkUsage(year);
+
         return JsonHelper.createJsonObject(
-        		new HashMap<String,String>(){{
-        			put("usage", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
-        		}}
-        		);
+                new HashMap<String, String>() {{
+                    put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+                }});
     }
-    
-    /*@Path("elk/{company}/{year}")
+
+    @Path("elk/{company}/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getElkUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
-    	List usages = Statistic.getElkUsage(company, year);
-    	usages = Statistic.calculateScale(usages);
-        return JsonHelper.createJsonArrFromListArr(usages);
+        Map<String, Long> usages = Statistic.getElkUsage(company, year);
+
+        return JsonHelper.createJsonObject(
+                new HashMap<String, String>() {{
+                    put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+                }});
     }
-    
+    /*
     @Path("gas/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
@@ -112,5 +103,5 @@ public class RestServices {
     	        +_return;
         return _return;
     }*/
-    
+
 }

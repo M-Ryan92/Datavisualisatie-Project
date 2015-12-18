@@ -70,6 +70,9 @@ public class Statistic {
     
     public static Map<String, String> calculateScale(Map<String, Long> usages){
     	Map<String, String> newMap = new HashMap<String, String>();
+        if(usages.isEmpty()){
+            return newMap;
+        }
     	long avarageUsage, range = -1;
     	long total = 0;
     	int size = 0, amountOfFirstRange = 0, amountOfSecondRange = 0, amountOfThirdRange = 0;
