@@ -3,9 +3,13 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * .5;
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200;
     self.scale = 5400;
+
+    $scope.years = [2009, 2010, 2012, 2013, 2014, 2015];
     $scope.selectedYear = "Select a year...";
+
     $scope.selectedCompany = "Select a energy company...";
     $scope.companies = ["Liander", "Enexis", "ENDINET"];
+
     $scope.onCompanyChange = function (company) {
         self.requestDataCompany(company);
     };
@@ -24,8 +28,6 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
          });*/
     };
 
-
-    $scope.years = [2009, 2010, 2012, 2013, 2014, 2015];
     $scope.onYearChange = function (year) {
         self.requestData(year);
     };
@@ -81,13 +83,13 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
-                        if (self.usage[d.properties.postcode] !== null) {
-                            Object.keys(self.range).forEach(function (key) {
-                                if (self.usage[d.properties.postcode] >= self.range[key][0] && self.usage[d.properties.postcode] <= self.range[key][1]) {
-                                    col = key;
-                                }
-                            });
-                        }
+//                        if (self.usage[d.properties.postcode] !== null) {
+//                            Object.keys(self.range).forEach(function (key) {
+//                                if (self.usage[d.properties.postcode] >= self.range[key][0] && self.usage[d.properties.postcode] <= self.range[key][1]) {
+//                                    col = key;
+//                                }
+//                            });
+//                        }
                         return col;
                     })
                     .attr("stroke-width", function (d) {
@@ -99,9 +101,17 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     .attr("d", path)
                     .on("mouseover", function (d) {
                         d3.select("div .tooltiphelper").text("Postcode gebied: " + d.properties.postcode);
+                        var element = d3.selectAll("path[id='" + d.properties.postcode + "']");
+                        
+                        element.style("opacity", .5);
+                        element.attr("stroke-width", 0);
                     })
                     .on("mouseout", function (d) {
                         d3.select("div .tooltiphelper").text("");
+                        var element = d3.selectAll("path");
+
+                        element.style("opacity", 1);
+                        element.attr("stroke-width", d.properties['stroke-width']);
                     });
         });
 
