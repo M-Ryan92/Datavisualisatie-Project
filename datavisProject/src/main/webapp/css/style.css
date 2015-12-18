@@ -27,6 +27,15 @@ svg{
     position:relative;
     width:100%;
 }
+.datavisProjectBase {
+    background: firebrick;
+}
+.datavisPannel {
+    background: #ecf3ff;
+    border: 2px solid rgba(0,0,0,0.5);
+    border-radius: 10px;
+    padding:0px;
+}
 
 .e-maatschappij{
     margin-top: 10px;

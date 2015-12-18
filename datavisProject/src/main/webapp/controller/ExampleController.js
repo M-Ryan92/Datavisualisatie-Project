@@ -59,7 +59,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
         var svg = d3.selectAll(".map").append("svg")
                 .attr("width", width)
                 .attr("height", height)
-                .attr("style", "border: 2px solid #000; padding:0px;");
+                .attr("class", "datavisPannel");
 
         var path = d3.geo.path()
                 .projection(projection);
