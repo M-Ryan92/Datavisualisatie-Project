@@ -13,7 +13,7 @@
 
 html, body{
     height: 100%;
-    overflow:hidden;
+    /*overflow:hidden;*/
 }
 .navbar-brand{
     padding-top:8px;

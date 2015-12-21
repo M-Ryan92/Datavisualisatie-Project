@@ -1,7 +1,17 @@
 app.registerCtrl('ExampleController', function ($scope, $http) {
     var self = this;
     var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * .5;
-    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200 - 170;
+    
+    var h = d3.select(".navbar").node().getBoundingClientRect();
+    var f = d3.select("footer").node().getBoundingClientRect();
+    var t = d3.select("h1").node().getBoundingClientRect();
+    var m = 20+30+60+20;
+    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)- h.height-f.height-t.height -m;
+    // - h.height-f.height-t.height-50
+    console.log(h);
+    console.log(f);
+    console.log(t);
+    console.log(height);
     self.scale = 5400;
 
     $scope.years = [2009, 2010, 2012, 2013, 2014, 2015];
@@ -20,10 +30,12 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
             console.log(response);
             self.usagescale = response.data.usagescale;
             self.draw();
+            d3.select(".spinner").remove();
         }, function errorCallback(response) {
-            console.log("oh no it went wong =C!");
+            console.log("oh no it went wong -.-!");
+            d3.select(".spinner").remove();
         });
-        d3.select(".spinnerwinner").remove();
+        
     };
 
     self.requestData = function (year) {
@@ -36,10 +48,12 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
             console.log(response);
             self.usagescale = response.data.usagescale;
             self.draw();
+            d3.select(".spinner").remove();
         }, function errorCallback(response) {
             console.log("oh no it went wong =C!");
+            d3.select(".spinner").remove();
         });
-        d3.select(".spinnerwinner").remove();
+        
     };
 
     $scope.onYearChange = function (year) {
@@ -101,7 +115,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
-                        if (self.usagescale.hasOwnProperty(d.properties.postcode)) {
+                        if (typeof self.usagescale!== "undefined" && self.usagescale.hasOwnProperty(d.properties.postcode)) {
                             col = self.usagescale[d.properties.postcode];
                         }
                         return col;
