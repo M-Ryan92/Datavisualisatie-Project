@@ -1,17 +1,16 @@
 app.registerCtrl('ExampleController', function ($scope, $http) {
+
     var self = this;
-    var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * .5;
-    
+
+    var width = d3.select(".map").node().getBoundingClientRect().width;
     var h = d3.select(".navbar").node().getBoundingClientRect();
     var f = d3.select("footer").node().getBoundingClientRect();
     var t = d3.select("h1").node().getBoundingClientRect();
-    var m = 20+30+60+20;
-    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)- h.height-f.height-t.height -m;
-    // - h.height-f.height-t.height-50
-    console.log(h);
-    console.log(f);
-    console.log(t);
-    console.log(height);
+    var m = 30 +20;
+    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
+    var tooltipDiv;
+
+
     self.scale = 5400;
 
     $scope.years = [2009, 2010, 2012, 2013, 2014, 2015];
@@ -22,7 +21,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
 
     self.requestData = function (year, company) {
         d3.select(".map").append("div")
-                .attr("class","spinner");
+                .attr("class", "spinner");
         $http({
             method: 'GET',
             url: 'resources/data/elk/' + company + '/' + year
@@ -35,12 +34,12 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
             console.log("oh no it went wong -.-!");
             d3.select(".spinner").remove();
         });
-        
+
     };
 
     self.requestData = function (year) {
         d3.select(".map").append("div")
-                .attr("class","spinner");
+                .attr("class", "spinner");
         $http({
             method: 'GET',
             url: 'resources/data/elk/' + year
@@ -53,12 +52,12 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
             console.log("oh no it went wong =C!");
             d3.select(".spinner").remove();
         });
-        
+
     };
 
     $scope.onYearChange = function (year) {
         $scope.selectedYear = year;
-        
+
         if ($scope.selectedCompany === "Select a energy company...") {
             console.log("filter year: " + year + ", comp: all");
             self.requestData(year);
@@ -70,15 +69,18 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
 
     $scope.onCompanyChange = function (company) {
         $scope.selectedCompany = company;
-        if($scope.selectedYear !== "Select a year..."){
+        if ($scope.selectedYear !== "Select a year...") {
             self.requestDataCompany($scope.selectedYear, company);
         } else {
             alert("Pleas select a year");
         }
-        
+
     };
 
     self.init = function () {
+        console.log("test");
+//        d3.select(".map").style("width", width);
+        d3.selectAll(".map").attr("style", "height:" + height + "px;");
         self.requestData(0);
     };
 
@@ -91,6 +93,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
         var svg = d3.selectAll(".map").append("svg")
                 .attr("width", width)
                 .attr("height", height)
+                .attr("style", "height:" + height + "px;")
                 .attr("class", "datavisPannel");
 
         var path = d3.geo.path()
@@ -115,7 +118,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
-                        if (typeof self.usagescale!== "undefined" && self.usagescale.hasOwnProperty(d.properties.postcode)) {
+                        if (typeof self.usagescale !== "undefined" && self.usagescale.hasOwnProperty(d.properties.postcode)) {
                             col = self.usagescale[d.properties.postcode];
                         }
                         return col;
@@ -128,18 +131,31 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("d", path)
                     .on("mouseover", function (d) {
-                        d3.select("div .tooltiphelper").text("Postcode gebied: " + d.properties.postcode);
                         var element = d3.selectAll("path[id='" + d.properties.postcode + "']");
-
                         element.style("opacity", .8);
                         element.attr("stroke-width", 0);
+
+                        d3.select('.map').selectAll('.tooltip').remove();
+                        tooltipDiv = d3.select('.map').append('div').attr('class', 'tooltip');
+                        var absoluteMousePos = d3.mouse(d3.select('.map').node());
+                        tooltipDiv.style('left', (absoluteMousePos[0] + 30) + 'px')
+                                .style('top', (absoluteMousePos[1] - 30) + 'px');
+                        var tooltipText = d.properties.postcode;
+                        tooltipDiv.html(tooltipText);
+
+                    })
+                    .on("mousemove", function (d) {
+                        var absoluteMousePos = d3.mouse(d3.select('.map').node());
+                                    tooltipDiv.style('left', (absoluteMousePos[0] + 30) + 'px')
+                                                .style('top', (absoluteMousePos[1] - 30) + 'px');
+                                    var tooltipText = d.properties.postcode;
+                                    tooltipDiv.html(tooltipText);
                     })
                     .on("mouseout", function (d) {
-                        d3.select("div .tooltiphelper").text("");
                         var element = d3.selectAll("path");
-
                         element.style("opacity", 1);
                         element.attr("stroke-width", d.properties['stroke-width']);
+                        tooltipDiv.remove();
                     });
         });
 
@@ -174,6 +190,6 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
 
         svg.call(zoom);
     };
-
     self.init();
 });
+

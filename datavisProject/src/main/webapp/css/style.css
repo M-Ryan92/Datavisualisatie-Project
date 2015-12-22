@@ -13,7 +13,7 @@
 
 html, body{
     height: 100%;
-    /*overflow:hidden;*/
+    overflow:hidden;
 }
 .navbar-brand{
     padding-top:8px;
@@ -24,15 +24,20 @@ svg{
     position:relative;
     width:100%;
 }
+
+.map{
+    background-color:#fff;
+    border: 1px solid blanchedalmond;
+    border-radius: 4px;
+}
 .datavisProjectBase {
     background: firebrick;
     color: blanchedalmond;
 }
 .datavisPannel {
-    background: #fff;
-    border: 1px solid blanchedalmond;
-    border-radius: 4px;
     padding:0px;
+    width:100%;
+    height:auto;
 }
 
 .e-maatschappij{
@@ -45,29 +50,33 @@ svg{
     border:1px blanchedalmond solid;   
 }
 
-/*.tooltiphelper{
-    text-align: center; 
-    height: 30px;
-}*/
-
-footer, .push{
-    bottom:0;
-    width: 100%;
-    margin: 30px 0;
-    height:5em;
+.tooltip{
+    opacity:0.8;
+    background-color:#fff;
+    border:1px solid #000;
+    border:1px solid rgba(0,0,0,0.5);
+    border-radius: 4px;
+    color:firebrick;
+    padding:5px 10px;
+    -webkit-user-select: none;  
+    -moz-user-select: none;     
+    -ms-user-select: none;      
+    user-select: none;   
 }
+
 
 .wrapper{
     min-height: 100%;
-    height: auto !important;
     height: 100%;
-    margin-bottom:-5em;
+    margin-bottom:-52px;
 }
 
-.panel-footer{
-    height:100px;
+.footer{
+    height:52px;
     width:100%;
-    border-radius: 0;
+    position:absolute;
+    bottom:0;
+    background-color:#f5f5f5;
 }
 
 
@@ -94,6 +103,7 @@ footer, .push{
 
 .navbar-default {
     border-radius: 0;
+    margin-bottom: 0;
 }
 
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover{
@@ -110,16 +120,16 @@ footer, .push{
 @keyframes spinner {
     to {transform: rotate(360deg);}
 }
- 
+
 @-webkit-keyframes spinner {
     to {-webkit-transform: rotate(360deg);}
 }
- 
+
 .spinner {
     min-width: 30px;
     min-height: 30px;
 }
- 
+
 .spinner:before {
     content: 'Loading…';
     position: absolute;
@@ -130,7 +140,7 @@ footer, .push{
     margin-top: -13px;
     margin-left: -13px;
 }
- 
+
 .spinner:not(:required):before {
     content: '';
     border-radius: 50%;
