@@ -20,6 +20,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     $scope.companies = ["Liander", "Enexis", "Endinet"];
 
     self.requestData = function (year, company) {
+        d3.select("svg").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
         $http({
@@ -38,6 +39,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     };
 
     self.requestData = function (year) {
+        d3.select("svg").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
         $http({
