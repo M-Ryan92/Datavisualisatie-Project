@@ -39,8 +39,8 @@ app.directive('dropdownMultiselect', function () {
             showmax: '=showmax'
         },
         template: "<div class='multiselect-group' data-ng-class='{open: open}'>" +
-                "<button class='dropdown-toggle form-control multiselect-control' data-ng-click='open=!open;openDropdown()'><span class='pull-left'>{{selectText}}</span> <span class='caret'></span></button>" +
-                "<ul class='dropdown-menu' aria-labelledby='dropdownMenu'>" +
+                "<button class='dropdown-toggle form-control multiselect-control' ng-blur='open=!open;openDropdown()' data-ng-click='open=!open;openDropdown()'><span class='pull-left'>{{selectText}}</span> <span class='caret'></span></button>" +
+                "<ul class='dropdown-menu' style='width:100%;' aria-labelledby='dropdownMenu'>" +
                 "<li><a data-ng-click='selectAll()'><i class='icon-ok-sign'></i>  Check All</a></li>" +
                 "<li><a data-ng-click='deselectAll();'><i class='icon-remove-sign'></i>  Uncheck All</a></li>" +
                 "<li class='divider'></li>" +
@@ -59,12 +59,12 @@ app.directive('dropdownMultiselect', function () {
             $scope.selectAll = function () {
                 $scope.model = _.pluck($scope.options, 'id');
                 $scope.setSelected();
-                console.log($scope.model);
+                //console.log($scope.model);
             };
             $scope.deselectAll = function () {
                 $scope.model = [];
                 $scope.setSelected();
-                console.log($scope.model);
+                //console.log($scope.model);
             };
             $scope.setSelectedItem = function () {
                 var id = this.option.id;
@@ -74,7 +74,7 @@ app.directive('dropdownMultiselect', function () {
                     $scope.model.push(id);
                 }
                 $scope.setSelected();
-                console.log($scope.model);
+                //console.log($scope.model);
                 return false;
             };
             $scope.isChecked = function (id) {

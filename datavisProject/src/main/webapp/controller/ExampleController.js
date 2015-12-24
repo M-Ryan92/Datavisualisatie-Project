@@ -10,7 +10,6 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
     var tooltipDiv;
 
-
     self.scale = 5400;
 
     $scope.years = [
@@ -19,14 +18,16 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
         {"id": 2012, "name": "2012", "assignable": true},
         {"id": 2013, "name": "2012", "assignable": true}
     ];
+    $scope.preselectYears = {years: []};
     $scope.selectedYear = "Select a year...";
     $scope.selected_years = [];
-    
+
     $scope.companies = [
         {"id": "Liander", "name": "Liander", "assignable": true},
         {"id": "Enexis", "name": "Enexis", "assignable": true},
         {"id": "Endinet", "name": "Endinet", "assignable": true}
     ];
+    $scope.preselectCompanies = {companies: []};
     $scope.selectedcompany = "Select a energy company...";
     $scope.selected_companies = [];
 
@@ -91,9 +92,20 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     };
 
     self.init = function () {
-        console.log("test");
-//        d3.select(".map").style("width", width);
         d3.selectAll(".map").attr("style", "height:" + height + "px;");
+
+        $scope.$watch('selected_years.length', function () {
+            if ($scope.selected_years.lenght !== 0) {
+                //$scope.onYearChange($scope.selected_years);
+            }
+        });
+
+        $scope.$watch('selected_companies.length', function () {
+            if ($scope.selected_companies.lenght !== 0) {
+                //$scope.onCompanyChange($scope.selected_companies);
+            }
+        });
+
         self.requestData(0);
     };
 
