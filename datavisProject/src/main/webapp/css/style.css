@@ -93,3 +93,29 @@ footer, .push{
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover{
      background-color:transparent;
 }
+
+[class^="icon-"], [class*=" icon-"] {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    vertical-align: text-top;
+    background-image: url("../img/glyphicons-halflings.png");
+    background-position: 14px 14px;
+    background-repeat: no-repeat;
+    margin-top: 1px;
+}
+
+.icon-ok {
+    background-position: -288px 0;
+    background-position-x: -288px;
+    background-position-y: 0px;
+}
+
+.icon-ok-sign {
+    background-position: -72px -96px;
+}
+
+.icon-remove-sign {
+    background-position: -48px -96px;
+}

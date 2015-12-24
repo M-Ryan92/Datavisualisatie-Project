@@ -3,12 +3,21 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) * .5;
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 200;
     self.scale = 5400;
+    
+        $scope.roles = [
+          {"id": 1, "name": "Manager", "assignable": true},
+          {"id": 2, "name": "Developer", "assignable": true},
+          {"id": 3, "name": "Reporter", "assignable": true}
+    ];
+    
+    $scope.member = {roles: []};
+    $scope.selected_items = [];
 
     $scope.years = [2009, 2010, 2012, 2013, 2014, 2015];
     $scope.selectedYear = "Select a year...";
 
     $scope.selectedCompany = "Select a energy company...";
-    $scope.companies = ["Liander", "Enexis", "ENDINET"];
+    $scope.companies = ["Liander", "Enexis", "Endinet"];
 
     $scope.onCompanyChange = function (company) {
         self.requestDataCompany(company);
@@ -83,7 +92,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
-                        if(self.usage[d.properties.postcode] != null){
+                        if (self.usage[d.properties.postcode] != null) {
                             col = self.usage[d.properties.postcode];
                         }
 //                        if (self.usage[d.properties.postcode] !== null) {
@@ -105,7 +114,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     .on("mouseover", function (d) {
                         d3.select("div .tooltiphelper").text("Postcode gebied: " + d.properties.postcode);
                         var element = d3.selectAll("path[id='" + d.properties.postcode + "']");
-                        
+
                         element.style("opacity", .8);
                         element.attr("stroke-width", 0);
                     })
