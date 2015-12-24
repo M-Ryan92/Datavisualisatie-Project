@@ -23,17 +23,40 @@ svg{
     position:relative;
     width:100%;
 }
+
+.map{
+    background-color:#fff;
+    border: 1px solid blanchedalmond;
+    border-radius: 4px;
+}
 .datavisProjectBase {
     background: firebrick;
     color: blanchedalmond;
 }
+
+.wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -52px;
+    padding-bottom: 62px;
+}
 .datavisPannel {
-    background: #fff;
-    border: 1px solid blanchedalmond;
-    border-radius: 4px;
     padding:0px;
+    width:100%;
+    height:auto;
 }
 
+.multiselect-group {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.multiselect-control {
+    text-align: right;
+}
 .e-maatschappij{
     margin-top: 10px;
 }
@@ -44,28 +67,30 @@ svg{
     border:1px blanchedalmond solid;   
 }
 
-/*.tooltiphelper{
-    text-align: center; 
-    height: 30px;
-}*/
-
-footer, .push{
-    bottom:0;
-    width: 100%;
-    margin: 30px 0;
-    height:5em;
+.tooltip{
+    opacity:0.8;
+    background-color:#fff;
+    border:1px solid #000;
+    border:1px solid rgba(0,0,0,0.5);
+    border-radius: 4px;
+    color:firebrick;
+    padding:5px 10px;
+    -webkit-user-select: none;  
+    -moz-user-select: none;     
+    -ms-user-select: none;      
+    user-select: none;   
 }
 
 .wrapper{
     min-height: 100%;
-    height: auto !important;
     height: 100%;
-    margin-bottom:-5em;
+    margin-bottom:-52px;
 }
 
-.panel-footer{
-    height:100px;
+.footer{
+    height:52px;
     width:100%;
+    background-color:#f5f5f5;
 }
 
 
@@ -87,11 +112,20 @@ footer, .push{
     background-image: none;
     -webkit-box-shadow:none!important;
     box-shadow: none;
-   
+
+}
+
+.navbar-default {
+    border-radius: 0;
+    margin-bottom: 0;
 }
 
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover{
-     background-color:transparent;
+    background-color:transparent;
+}
+
+.spacing {
+    margin-bottom: 10px;
 }
 
 [class^="icon-"], [class*=" icon-"] {
@@ -118,4 +152,40 @@ footer, .push{
 
 .icon-remove-sign {
     background-position: -48px -96px;
+}
+
+/*
+ *  spinner stuff
+ */
+@keyframes spinner {
+    to {transform: rotate(360deg);}
+}
+
+@-webkit-keyframes spinner {
+    to {-webkit-transform: rotate(360deg);}
+}
+
+.spinner {
+    min-width: 30px;
+    min-height: 30px;
+}
+
+.spinner:before {
+    content: 'Loading…';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    margin-top: -13px;
+    margin-left: -13px;
+}
+
+.spinner:not(:required):before {
+    content: '';
+    border-radius: 50%;
+    border: 5px solid #c96464;
+    border-top-color: #FFEBCD;
+    animation: spinner .6s linear infinite;
+    -webkit-animation: spinner .6s linear infinite;
 }

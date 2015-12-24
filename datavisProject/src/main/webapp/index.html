@@ -15,11 +15,11 @@
         <script type="text/javascript" src="js/lib/underscore-min.js"></script>
     </head>
     <body ng-app="datavisProject" class="datavisProjectBase">
-        <div ng-include src="'view/_header.html'"></div>
-
-        <div ng-view></div>
-
-        <div ng-include src="'view/_footer.html'"></div>
+        <div class="wrap">
+            <div ng-include src="'view/_header.html'"></div>
+            <div ng-view></div>
+        </div>
+        <div class="footer" ng-include src="'view/_footer.html'"></div>
     </body>
 
 </html>

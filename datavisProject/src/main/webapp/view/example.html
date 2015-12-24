@@ -2,36 +2,34 @@
     <div class="wrapper">
         <div class="row">
             <div class="col-md-4"><p></p></div>
-            <div class="col-md-8"><h1 style="padding:0 15px;">Energiemaatschappij concurrentie</h1></div>
-
+            <div class="col-md-8"><h1 style="padding:0 5px;">Energiemaatschappij concurrentie</h1></div>
             <div class="col-md-12">
-                <div class="col-md-12">
-                    <h2 class="col-md-offset-4 col-md-8 tooltiphelper" style="text-align: center; height: 30px;"></h2>
-                </div>
-                <div  class="col-md-4 filter">
-                    <label>FILTER</label>
-                    <div>
+                <div  class="col-md-4 spacing">
+                    <div class="col-md-12 filter">
+                        <label>FILTER</label>
+                        <div>
+                            
+                            <dropdown-multiselect pre-selected="" model="selected_years" options="years" defaulttext="selectedYear" showmax="4"></dropdown-multiselect>
+                            <dropdown-multiselect pre-selected="" model="selected_companies" options="companies" defaulttext="selectedcompany" showmax="4"></dropdown-multiselect>
+                            
+<!--                            <select class="form-control" ng-model="selectedYear" ng-change="onYearChange(selectedYear)">
+                                <option>Select a year...</option>
+                                <option ng-repeat="year in years">{{year}}</option>
+                            </select>
 
-                        <dropdown-multiselect pre-selected="member.roles" model="selected_items" options="roles"></dropdown-multiselect>
-    
-                        
-                        <select class="form-control yearselector" ng-model="selectedYear" ng-change="onYearChange(selectedYear)">
-                            <option>Select a year...</option>
-                            <option ng-repeat="year in years">{{year}}</option>
-                        </select>
-
-                        <select class="form-control e-maatschappij companyselector" ng-model="selectedCompany" ng-change="onCompanyChange(selectedCompany)">
-                            <option>Select a energy company...</option>
-                            <option ng-repeat="company in companies">{{company}}</option>
-                        </select>
+                            <select class="form-control e-maatschappij" ng-model="selectedCompany" ng-change="onCompanyChange(selectedCompany)">
+                                <option>Select a energy company...</option>
+                                <option ng-repeat="company in companies">{{company}}</option>
+                            </select>-->
+                        </div>
                     </div>
+
                 </div>
-                <div class="col-md-8">
-                    <div class="col-md-12 map">
+                <div class="col-md-8 spacing">
+                    <div class="map">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="push"></div>
