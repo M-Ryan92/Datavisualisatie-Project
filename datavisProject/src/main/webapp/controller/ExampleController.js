@@ -1,4 +1,4 @@
-app.registerCtrl('ExampleController', function ($scope, $http) {
+app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
     var self = this;
 
@@ -12,11 +12,15 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
 
     self.scale = 5400;
 
+    $scope.canceler = null;
     $scope.years = [
+        {"id": 2009, "name": "2009", "assignable": true},
         {"id": 2010, "name": "2010", "assignable": true},
         {"id": 2011, "name": "2011", "assignable": true},
         {"id": 2012, "name": "2012", "assignable": true},
-        {"id": 2013, "name": "2012", "assignable": true}
+        {"id": 2013, "name": "2013", "assignable": true},
+        {"id": 2014, "name": "2014", "assignable": true},
+        {"id": 2015, "name": "2015", "assignable": true}
     ];
     $scope.preselectYears = {years: []};
     $scope.selectedYear = "Select a year...";
@@ -31,20 +35,34 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     $scope.selectedcompany = "Select a energy company...";
     $scope.selected_companies = [];
 
+    $scope.timeouthandler = function () {
+        if ($scope.canceler === null) {
+            $scope.canceler = $q.defer();
+        } else {
+            $scope.canceler.resolve();
+            $scope.canceler = $q.defer();
+        }
+    };
+
     self.requestData = function (year, company) {
         d3.select("svg").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
+
+        $scope.timeouthandler();
+
         $http({
             method: 'GET',
             url: 'resources/data/elk/' + company + '/' + year
         }).then(function successCallback(response) {
             console.log(response);
+            $scope.request = null;
             self.usagescale = response.data.usagescale;
             self.draw();
             d3.select(".spinner").remove();
         }, function errorCallback(response) {
             console.log("oh no it went wong -.-!");
+            $scope.request = null;
             d3.select(".spinner").remove();
         });
 
@@ -54,23 +72,33 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
         d3.select("svg").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
+        $scope.timeouthandler();
+
         $http({
+            timeout: $scope.canceler.promise,
             method: 'GET',
             url: 'resources/data/elk/' + year
         }).then(function successCallback(response) {
             console.log(response);
+            $scope.request = null;
             self.usagescale = response.data.usagescale;
             self.draw();
             d3.select(".spinner").remove();
         }, function errorCallback(response) {
             console.log("oh no it went wong =C!");
+            $scope.request = null;
             d3.select(".spinner").remove();
         });
 
     };
 
     $scope.onYearChange = function (year) {
-        $scope.selectedYear = year;
+        if (year.length === 0) {
+            year = '0';
+        } else {
+            year = year.toString().substring(0, year.toString().length);
+            console.log(year);
+        }
 
         if ($scope.selectedCompany === "Select a energy company...") {
             console.log("filter year: " + year + ", comp: all");
@@ -82,13 +110,14 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     };
 
     $scope.onCompanyChange = function (company) {
-        $scope.selectedCompany = company;
-        if ($scope.selectedYear !== "Select a year...") {
-            self.requestDataCompany($scope.selectedYear, company);
-        } else {
-            alert("Pleas select a year");
+        if (company === 'undefined') {
+            $scope.selectedCompany = company;
+            if ($scope.selectedYear !== "Select a year...") {
+                self.requestDataCompany($scope.selectedYear, company);
+            } else {
+                alert("Pleas select a year");
+            }
         }
-
     };
 
     self.init = function () {
@@ -96,11 +125,12 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
 
         $scope.$watch('selected_years.length', function () {
             if ($scope.selected_years.lenght !== 0) {
-                //$scope.onYearChange($scope.selected_years);
+                $scope.onYearChange($scope.selected_years);
             }
         });
 
         $scope.$watch('selected_companies.length', function () {
+            console.log($scope.selected_companies);
             if ($scope.selected_companies.lenght !== 0) {
                 //$scope.onCompanyChange($scope.selected_companies);
             }

@@ -36,24 +36,29 @@ app.directive('dropdownMultiselect', function () {
             options: '=',
             pre_selected: '=preSelected',
             defaulttext: '=defaulttext',
-            showmax: '=showmax'
+            showmax: '=showmax',
+            ngid: '=ngid'
         },
         template: "<div class='multiselect-group' data-ng-class='{open: open}'>" +
-                "<button class='dropdown-toggle form-control multiselect-control' ng-blur='open=!open;openDropdown()' data-ng-click='open=!open;openDropdown()'><span class='pull-left'>{{selectText}}</span> <span class='caret'></span></button>" +
-                "<ul class='dropdown-menu' style='width:100%;' aria-labelledby='dropdownMenu'>" +
+                "<button class='dropdown-toggle form-control multiselect-control' data-ng-click='open=!open;openDropdown()'><span class='pull-left'>{{selectText}}</span> <span class='caret'></span></button>" +
+                "<ul tabindex='0' class='dropdown-menu' id='{{ngid}}' ng-blur='open=!open;' style='width:100%;' aria-labelledby='dropdownMenu'>" +
                 "<li><a data-ng-click='selectAll()'><i class='icon-ok-sign'></i>  Check All</a></li>" +
                 "<li><a data-ng-click='deselectAll();'><i class='icon-remove-sign'></i>  Uncheck All</a></li>" +
                 "<li class='divider'></li>" +
                 "<li data-ng-repeat='option in options'> <a data-ng-click='setSelectedItem()'>{{option.name}}<span data-ng-class='isChecked(option.id)'></span></a></li>" +
                 "</ul>" +
                 "</div>",
-        controller: function ($scope) {
+        controller: function ($scope, $timeout, $window) {
             $scope.selectText = $scope.defaulttext;
             $scope.openDropdown = function () {
                 $scope.selected_items = [];
                 for (var i = 0; i < $scope.pre_selected.length; i++) {
                     $scope.selected_items.push($scope.pre_selected[i].id);
                 }
+                $timeout(function () {
+                    $window.document.getElementById($scope.ngid).focus();
+
+                });
             };
 
             $scope.selectAll = function () {
@@ -100,7 +105,7 @@ app.directive('dropdownMultiselect', function () {
                         maxitems--;
                     }
                 });
-                if(maxitems < 0){
+                if (maxitems < 0) {
                     text = "";
                 }
                 if (text.length > 0) {

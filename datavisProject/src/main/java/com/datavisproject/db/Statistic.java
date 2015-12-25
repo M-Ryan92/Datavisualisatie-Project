@@ -17,7 +17,7 @@ public class Statistic {
     
     public static Map<String, Long> getElkUsage(String year) throws NumberFormatException{
     	List usages;
-    	String query = "call getElkusage(?);";
+    	String query = "call getElkUsage(?);";
     	usages = em.createNativeQuery(query)
     			.setParameter(1, year)
     			.getResultList();
