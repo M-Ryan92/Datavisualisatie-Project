@@ -52,6 +52,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         $scope.timeouthandler();
 
         $http({
+            timeout: $scope.canceler.promise,
             method: 'GET',
             url: 'resources/data/elk/' + company + '/' + year
         }).then(function successCallback(response) {
