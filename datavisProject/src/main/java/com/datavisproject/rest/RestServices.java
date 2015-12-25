@@ -16,11 +16,7 @@ import org.codehaus.jettison.json.JSONException;
 @Path("data")
 public class RestServices {
 
-    @Path("elk/{year}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @GET
-    public String getElkUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
-
+    private String formatYear(String year) {
         String paramLine = "";
         if (year.contains(",")) {
             String[] split = year.split(",");
@@ -33,8 +29,15 @@ public class RestServices {
         } else {
             paramLine = paramLine.substring(0, paramLine.length() - 1);
         }
+        return paramLine;
+    }
 
-        Map<String, Long> usages = Statistic.getElkUsage(paramLine);
+    @Path("elk/{year}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getElkUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
+
+        Map<String, Long> usages = Statistic.getElkUsage(formatYear(year));
 
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
@@ -48,7 +51,8 @@ public class RestServices {
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getElkUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
-        Map<String, Long> usages = Statistic.getElkUsage(company, year);
+
+        Map<String, Long> usages = Statistic.getElkUsage(company, formatYear(year));
 
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
