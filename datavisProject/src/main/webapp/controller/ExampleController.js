@@ -118,11 +118,18 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             $scope.selectedCompany = company;
             console.log("selectedyear");
             console.log($scope.selectedYear);
-            
+
             if ($scope.selectedYear !== "Select a year...") {
                 self.requestDataCompany($scope.selectedYear, company.toString());
             } else {
                 self.requestDataCompany("0", company.toString());
+            }
+        }
+        {
+            if ($scope.selectedYear !== "Select a year...") {
+                self.requestData("0");
+            } else {
+                self.requestData($scope.selectedYear);
             }
         }
     };
