@@ -10,9 +10,9 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
     var tooltipDiv;
 
-    var color = d3.scale.linear()
+    var color = d3.scale.quantize()
             .domain([0, 40000000, 80000000, 120000000])
-            .range(["Lightblue", "green", "yellow", "red"]);
+            .range(["rgb(63, 191, 191)", "rgb(63, 191, 63)", "rgb(222, 222, 57)", "rgb(255, 0, 0)"]);
 
     self.scale = 5400;
 
@@ -152,11 +152,23 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             }
         });
 
-        var sampleCategoricalData = ["Something", "Something Else", "Another", "This", "That", "Etc"]
-        var sampleOrdinal = d3.scale.category20().domain(sampleCategoricalData);
-        var verticalLegend = d3.svg.legend().labelFormat("none").cellPadding(5).orientation("vertical").units("Usage (in sjv)").cellWidth(25).cellHeight(18).inputScale(color).cellStepping(10);
-        d3.select("svg.legend").attr("height", 120).attr("font-weight","700").append("g").attr("class", "legend").call(verticalLegend).attr("transform","translate(0,25)");
-        d3.selectAll(".legend text").attr("fill", "blanchedalmond");
+        var legend = d3.legend.color()
+                .title("Usage (in sjv)")
+                .labelFormat(function (d) {
+                    if (d >= 1e6) {
+                        return d / 1e6 + "M";
+                    }
+                    if (d >= 1e3) {
+                        return d / 1e3 + "K";
+                    }
+                    return d;
+                })
+                .useClass(false)
+                .scale(color);
+        
+        d3.select("svg.legend").attr("height", 120).call(legend);
+        d3.select("svg.legend .legendTitle").attr("transform", "translate(0,15)");
+        d3.selectAll(".legend text").attr("font-weight", "700").attr("fill", "blanchedalmond");
     };
 
     self.draw = function () {
