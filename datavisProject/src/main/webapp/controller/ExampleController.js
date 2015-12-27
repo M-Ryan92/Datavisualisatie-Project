@@ -57,13 +57,11 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             url: 'resources/data/elk/' + company + '/' + year
         }).then(function successCallback(response) {
             console.log(response);
-            $scope.request = null;
             self.usagescale = response.data.usagescale;
             self.draw();
             d3.select(".spinner").remove();
         }, function errorCallback(response) {
-            console.log("oh no it went wong -.-!");
-            $scope.request = null;
+            console.log("oh no it went wong -.-! companychange");
             d3.select(".spinner").remove();
         });
 
@@ -81,13 +79,11 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             url: 'resources/data/elk/' + year
         }).then(function successCallback(response) {
             console.log(response);
-            $scope.request = null;
             self.usagescale = response.data.usagescale;
             self.draw();
             d3.select(".spinner").remove();
         }, function errorCallback(response) {
-            console.log("oh no it went wong =C!");
-            $scope.request = null;
+            console.log("oh no it went wong -.-! yearchange");
             d3.select(".spinner").remove();
         });
 
@@ -98,38 +94,33 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             year = '0';
         } else {
             year = year.toString().substring(0, year.toString().length);
-            console.log(year);
         }
 
-        if ($scope.selectedCompany === "Select a energy company..." && $scope.selectedCompany !== 'undefined') {
+        if ($scope.selected_companies.length === 0) {
             console.log("filter year: " + year + ", comp: all");
             self.requestData(year);
         } else {
-            console.log("filter year: " + year + ", comp: " + $scope.selectedCompany);
-            self.requestDataCompany(year, $scope.selectedCompany);
+            console.log("filter year: " + year + ", comp: " + $scope.selected_companies.toString());
+            self.requestDataCompany(year, $scope.selected_companies.toString());
         }
     };
 
     $scope.onCompanyChange = function (company) {
-        console.log("shiiit");
-        console.log(company.toString().length);
-        console.log(company.toString());
-        if (company.toString().length > 0 && company.toString() !== 'undefined') {
-            $scope.selectedCompany = company;
-            console.log("selectedyear");
-            console.log($scope.selectedYear);
-
-            if ($scope.selectedYear !== "Select a year...") {
-                self.requestDataCompany($scope.selectedYear, company.toString());
-            } else {
-                self.requestDataCompany("0", company.toString());
-            }
-        }
-        {
-            if ($scope.selectedYear !== "Select a year...") {
+        if (company.toString().length === 0) {
+            if ($scope.selected_years.length === 0) {
+                console.log("filter year: 0, comp: all");
                 self.requestData("0");
             } else {
-                self.requestData($scope.selectedYear);
+                console.log("filter year: " + $scope.selected_years + ", comp: all");
+                self.requestData($scope.selected_years);
+            }
+        } else {
+            if ($scope.selected_years.length === 0) {
+                console.log("filter year: 0, comp: " + $scope.selected_companies.toString());
+                self.requestDataCompany("0", company.toString());
+            } else {
+                console.log("filter year: " + $scope.selected_years + ", comp: " + $scope.selected_companies.toString());
+                self.requestDataCompany($scope.selected_years, company.toString());
             }
         }
     };
@@ -138,16 +129,13 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         d3.selectAll(".map").attr("style", "height:" + height + "px;");
 
         $scope.$watch('selected_years.length', function () {
-            if ($scope.selected_years.lenght !== 0) {
-                $scope.onYearChange($scope.selected_years);
-            }
+            $scope.onYearChange($scope.selected_years);
         });
 
         $scope.$watch('selected_companies.length', function () {
-            if ($scope.selected_companies.lenght !== 0) {
-                $scope.onCompanyChange($scope.selected_companies);
-            }
+            $scope.onCompanyChange($scope.selected_companies);
         });
+
     };
 
     self.draw = function () {
