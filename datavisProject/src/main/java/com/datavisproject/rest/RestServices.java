@@ -41,10 +41,10 @@ public class RestServices {
 
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
-                    {
-                        put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
-                    }
-                });
+            {
+                put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+            }
+        });
     }
 
     @Path("elk/{company}/{year}")
@@ -56,70 +56,39 @@ public class RestServices {
 
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
-                    {
-                        put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
-                    }
-                });
+            {
+                put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+            }
+        });
     }
-    /*
-     @Path("gas/{year}")
-     @Produces(MediaType.APPLICATION_JSON)
-     @GET
-     public String getGasUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
-    	
-     List usages = Statistic.getGasUsage(year);
-     usages = Statistic.calculateScale(usages);
-     return JsonHelper.createJsonArrFromListArr(usages);
-     }
-    
-     @Path("gas/{company}/{year}")
-     @Produces(MediaType.APPLICATION_JSON)
-     @GET
-     public String getGasUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
-    	
-     List usages = Statistic.getGasUsage(company, year);
-     usages = Statistic.calculateScale(usages);
-     return JsonHelper.createJsonArrFromListArr(usages);
-     }
-    
-     @Path("test/{year}")
-     @GET
-     public String test(@PathParam("year") String year) throws SQLException, JSONException, IOException {
-     String _return = "";
-     long avarageUsage, range = -1;
-     long total = 0;
-     int size = 0, amountOfFirstRange = 0, amountOfSecondRange = 0, amountOfThirdRange = 0;
-     List usages = Statistic.getGasUsage(year);
-     size = usages.size();
-     for(int i=0; i< size; i ++){
-     Object[] _arr = (Object[]) usages.get(i);
-     total+= ((BigDecimal) _arr[1]).longValue();
-     _return += _arr[0] + " "  + _arr[1] + "<br>";
-     }
-     avarageUsage = (total/size);
-     range = avarageUsage*2/3;
-    	
-     for(int i=0; i< size; i ++){
-     Object[] _arr = (Object[]) usages.get(i);
-     long _range = ((BigDecimal) _arr[1]).longValue();
-     if(_range < range){
-     amountOfFirstRange++;
-     }else if(_range > range && _range < range*2){
-     amountOfSecondRange++;
-     }else if (_range > range*2){
-     amountOfThirdRange++;
-     }
-     }
-    	
-    	
-     _return = "avarage is: "+avarageUsage + " <br> " 
-     + " size is: " + size + " <br> " 
-     + "total is: " + total + " <br> "
-     + "amountOfFirstRange is: " + amountOfFirstRange + " <br> "
-     + "amountOfSecondRange is: " + amountOfSecondRange + " <br> "
-     + "amountOfThirdRange is: " + amountOfThirdRange + " <br> "
-     +_return;
-     return _return;
-     }*/
 
+    @Path("gas/{year}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getGasUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
+
+        Map<String, Long> usages = Statistic.getGasUsage(formatYear(year));
+
+        return JsonHelper.createJsonObject(
+                new HashMap<String, String>() {
+            {
+                put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+            }
+        });
+    }
+
+    @Path("gas/{company}/{year}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getGasUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
+
+        Map<String, Long> usages = Statistic.getGasUsage(company, formatYear(year));
+
+        return JsonHelper.createJsonObject(
+                new HashMap<String, String>() {
+            {
+                put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+            }
+        });
+    }
 }
