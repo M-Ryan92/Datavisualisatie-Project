@@ -17,7 +17,8 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
         }
 
         $routeProvider.when('/', {
-            templateUrl: 'view/app.html'
+            templateUrl: 'view/example.html',
+            resolve: requireCtrl('ExampleController')
         })
                 .when('/example', {
                     templateUrl: 'view/example.html',
