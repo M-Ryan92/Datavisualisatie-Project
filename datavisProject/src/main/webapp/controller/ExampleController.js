@@ -10,6 +10,10 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
     var tooltipDiv;
 
+    var color = d3.scale.linear()
+            .domain([0, 40000000, 80000000, 120000000])
+            .range(["Lightblue", "green", "yellow", "red"]);
+
     self.scale = 5400;
 
     $scope.canceler = null;
@@ -47,7 +51,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     };
 
     self.requestDataCompany = function (year, company) {
-        d3.select("svg").remove();
+        d3.select("svg.datavisPannel").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
 
@@ -60,6 +64,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
+            self.usage = response.data.usage;
             self.draw();
             d3.select(".spinner").remove();
         }, function errorCallback(response) {
@@ -70,7 +75,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     };
 
     self.requestData = function (year) {
-        d3.select("svg").remove();
+        d3.select("svg.datavisPannel").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
         $scope.timeouthandler();
@@ -82,6 +87,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
+            self.usage = response.data.usage;
             self.draw();
             d3.select(".spinner").remove();
         }, function errorCallback(response) {
@@ -139,13 +145,18 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         });
 
         $scope.$watch('type', function () {
-            if($scope.selected_companies.toString().length >0){
+            if ($scope.selected_companies.toString().length > 0) {
                 $scope.onCompanyChange($scope.selected_companies);
             } else {
                 $scope.onYearChange($scope.selected_years);
             }
         });
 
+        var sampleCategoricalData = ["Something", "Something Else", "Another", "This", "That", "Etc"]
+        var sampleOrdinal = d3.scale.category20().domain(sampleCategoricalData);
+        var verticalLegend = d3.svg.legend().labelFormat("none").cellPadding(5).orientation("vertical").units("Usage (in sjv)").cellWidth(25).cellHeight(18).inputScale(color).cellStepping(10);
+        d3.select("svg.legend").attr("height", 120).attr("font-weight","700").append("g").attr("class", "legend").call(verticalLegend).attr("transform","translate(0,25)");
+        d3.selectAll(".legend text").attr("fill", "blanchedalmond");
     };
 
     self.draw = function () {
@@ -153,7 +164,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                 .scale(this.scale)
                 .translate([width / 2, height / 2]);
 
-        d3.select("svg").remove();
+        d3.select("svg.datavisPannel").remove();
         var svg = d3.selectAll(".map").append("svg")
                 .attr("width", width)
                 .attr("height", height)
@@ -182,8 +193,8 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
-                        if (typeof self.usagescale !== "undefined" && self.usagescale.hasOwnProperty(d.properties.postcode)) {
-                            col = self.usagescale[d.properties.postcode];
+                        if (typeof self.usage !== "undefined" && self.usage.hasOwnProperty(d.properties.postcode)) {
+                            col = color(self.usage[d.properties.postcode]);
                         }
                         return col;
                     })

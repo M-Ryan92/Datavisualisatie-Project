@@ -5,15 +5,19 @@
             <div class="col-md-8"><h1 style="padding:0 5px;">Energiemaatschappij concurrentie</h1></div>
             <div class="col-md-12">
                 <div  class="col-md-4 spacing">
-                    <div class="col-md-12 filter">
+                    <div class="col-md-12 filter" style="margin-bottom: 10px;">
                         <label>FILTER</label>
                         <div>
                             <dropdown-multiselect ngid="'dropdownyearsselect'" pre-selected="preselectYears" model="selected_years" options="years" defaulttext="selectedYear" showmax="4"></dropdown-multiselect>
                             <dropdown-multiselect ngid="'dropdowncompaniesselect'" pre-selected="preselectCompanies" model="selected_companies" options="companies" defaulttext="selectedcompany" showmax="4"></dropdown-multiselect>
 
-                            <label class="radio-inline col-md-5"><input type="radio" ng-model="type" value="gas" required>Gas</label>
-                            <label class="radio-inline col-md-5"><input type="radio" ng-model="type" value="elk" required >Elektra</label>
+                            <label class="radio-inline col-md-5"><input type="radio" ng-model="type" value="gas" required><label>Gas</label></label>
+                            <label class="radio-inline col-md-5"><input type="radio" ng-model="type" value="elk" required ><label>Elektra</label></label>
                         </div>
+                    </div>
+                    <div class="col-md-12 filter">
+                        <label>Legend</label>
+                        <svg class="legend"></svg>
                     </div>
 
                 </div>

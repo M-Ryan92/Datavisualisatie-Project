@@ -42,6 +42,7 @@ public class RestServices {
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {
+                put("usage", JsonHelper.createJsonArray(usages));
                 put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
             }
         });
@@ -57,6 +58,7 @@ public class RestServices {
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {
+                put("usage", JsonHelper.createJsonArray(usages));
                 put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
             }
         });
@@ -72,6 +74,7 @@ public class RestServices {
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {
+                put("usage", JsonHelper.createJsonArray(usages));
                 put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
             }
         });
@@ -87,6 +90,7 @@ public class RestServices {
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {
+                put("usage", JsonHelper.createJsonArray(usages));
                 put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
             }
         });
