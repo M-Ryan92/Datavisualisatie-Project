@@ -6,7 +6,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     var h = d3.select(".navbar").node().getBoundingClientRect();
     var f = d3.select("footer").node().getBoundingClientRect();
     var t = d3.select("h1").node().getBoundingClientRect();
-    var m = 30 + 20;
+    var m = 30 + 20; // margin and border stuff
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
     var tooltipDiv;
 
@@ -179,8 +179,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         d3.select("svg.datavisPannel").remove();
         var svg = d3.selectAll(".map").append("svg")
                 .attr("width", width)
-                .attr("height", height)
-                .attr("style", "height:" + height + "px;")
+                .attr("style", "height:" + (height -2) + "px;")
                 .attr("class", "datavisPannel");
 
         var path = d3.geo.path()
