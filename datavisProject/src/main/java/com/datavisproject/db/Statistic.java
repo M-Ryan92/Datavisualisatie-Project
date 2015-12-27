@@ -17,7 +17,7 @@ public class Statistic {
     
     public static Map<String, Long> getElkUsage(String year) throws NumberFormatException{
     	List usages;
-    	String query = "call getElkUsage(?);";
+    	String query = "call getUsage(?, 'ELK');";
     	usages = em.createNativeQuery(query)
     			.setParameter(1, year)
     			.getResultList();
@@ -28,7 +28,7 @@ public class Statistic {
     
     public static Map<String, Long> getElkUsage(String company, String year) throws NumberFormatException{
     	List usages;
-    	String query = "call getNetBeheerElkUsage(?, ?);";
+    	String query = "call getNetBeheerUsage(?, ?, 'ELK');";
     	usages = em.createNativeQuery(query)
     			.setParameter(1, company)
     			.setParameter(2, year)
@@ -38,7 +38,7 @@ public class Statistic {
     
     public static Map<String, Long> getGasUsage(String year) throws NumberFormatException{
     	List usages;
-    	String query = "call getGasUsage(?);";
+    	String query = "call getUsage(?, 'GAS');";
     	usages = em.createNativeQuery(query)
     			.setParameter(1, year)
     			.getResultList();
@@ -49,7 +49,7 @@ public class Statistic {
     
     public static Map<String, Long> getGasUsage(String company, String year) throws NumberFormatException{
     	List usages;
-    	String query = "call getNetBeheerGasUsage(?, ?);";
+    	String query = "call getNetBeheerUsage(?, ?, 'GAS');";
     	usages = em.createNativeQuery(query)
     			.setParameter(1, company)
     			.setParameter(2, year)
