@@ -8,19 +8,11 @@
                     <div class="col-md-12 filter">
                         <label>FILTER</label>
                         <div>
-                            
                             <dropdown-multiselect ngid="'dropdownyearsselect'" pre-selected="preselectYears" model="selected_years" options="years" defaulttext="selectedYear" showmax="4"></dropdown-multiselect>
                             <dropdown-multiselect ngid="'dropdowncompaniesselect'" pre-selected="preselectCompanies" model="selected_companies" options="companies" defaulttext="selectedcompany" showmax="4"></dropdown-multiselect>
-                            
-<!--                            <select class="form-control" ng-model="selectedYear" ng-change="onYearChange(selectedYear)">
-                                <option>Select a year...</option>
-                                <option ng-repeat="year in years">{{year}}</option>
-                            </select>
 
-                            <select class="form-control e-maatschappij" ng-model="selectedCompany" ng-change="onCompanyChange(selectedCompany)">
-                                <option>Select a energy company...</option>
-                                <option ng-repeat="company in companies">{{company}}</option>
-                            </select>-->
+                            <label class="radio-inline col-md-5"><input type="radio" ng-model="type" value="gas" required>Gas</label>
+                            <label class="radio-inline col-md-5"><input type="radio" ng-model="type" value="elk" required >Elektra</label>
                         </div>
                     </div>
 

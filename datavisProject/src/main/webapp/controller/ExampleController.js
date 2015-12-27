@@ -35,6 +35,8 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     $scope.selectedcompany = "Select a energy company...";
     $scope.selected_companies = [];
 
+    $scope.type = 'elk';
+
     $scope.timeouthandler = function () {
         if ($scope.canceler === null) {
             $scope.canceler = $q.defer();
@@ -54,7 +56,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         $http({
             timeout: $scope.canceler.promise,
             method: 'GET',
-            url: 'resources/data/elk/' + company + '/' + year
+            url: 'resources/data/' + $scope.type + '/' + company + '/' + year
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
@@ -76,7 +78,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         $http({
             timeout: $scope.canceler.promise,
             method: 'GET',
-            url: 'resources/data/elk/' + year
+            url: 'resources/data/' + $scope.type + '/' + year
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
@@ -134,6 +136,14 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
         $scope.$watch('selected_companies.length', function () {
             $scope.onCompanyChange($scope.selected_companies);
+        });
+
+        $scope.$watch('type', function () {
+            if($scope.selected_companies.toString().length >0){
+                $scope.onCompanyChange($scope.selected_companies);
+            } else {
+                $scope.onYearChange($scope.selected_years);
+            }
         });
 
     };
