@@ -6,7 +6,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     var h = d3.select(".navbar").node().getBoundingClientRect();
     var f = d3.select("footer").node().getBoundingClientRect();
     var t = d3.select("h1").node().getBoundingClientRect();
-    var m = 30 +20;
+    var m = 30 + 20;
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
     var tooltipDiv;
 
@@ -103,9 +103,11 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
 
         d3.json("map.json", function (error, nld) {
             nld.features.forEach(function (feature) {
-                feature.geometry.coordinates.forEach(function (coords) {
-                    coords.reverse();
-                });
+                if (feature.geometry.type === "Polygon"){
+                    feature.geometry.coordinates.forEach(function (coords) {
+                        coords.reverse();
+                    });
+                }
             });
             projection.center([(nld.bbox[0] + nld.bbox[2]) / 2, (nld.bbox[1] + nld.bbox[3]) / 2]);
             g.selectAll("path")
