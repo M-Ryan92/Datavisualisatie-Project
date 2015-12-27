@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -19,89 +16,83 @@ import org.codehaus.jettison.json.JSONException;
 @Path("data")
 public class RestServices {
 
+    private String formatYear(String year) {
+        String paramLine = "";
+        if (year.contains(",")) {
+            String[] split = year.split(",");
+            for (String s : split) {
+                paramLine += "´" + s + "´,";
+            }
+        }
+        if (paramLine.length() == 0) {
+            paramLine = year;
+        } else {
+            paramLine = paramLine.substring(0, paramLine.length() - 1);
+        }
+        return paramLine;
+    }
+
     @Path("elk/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getElkUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
 
-        Map<String, Long> usages = Statistic.getElkUsage(year);
+        Map<String, Long> usages = Statistic.getElkUsage(formatYear(year));
 
         return JsonHelper.createJsonObject(
-                new HashMap<String, String>() {{
-                    put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
-                }});
+                new HashMap<String, String>() {
+            {
+                put("usage", JsonHelper.createJsonArray(usages));
+                put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+            }
+        });
     }
 
     @Path("elk/{company}/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getElkUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
-        Map<String, Long> usages = Statistic.getElkUsage(company, year);
+
+        Map<String, Long> usages = Statistic.getElkUsage(company, formatYear(year));
 
         return JsonHelper.createJsonObject(
-                new HashMap<String, String>() {{
-                    put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
-                }});
+                new HashMap<String, String>() {
+            {
+                put("usage", JsonHelper.createJsonArray(usages));
+                put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+            }
+        });
     }
-    /*
+
     @Path("gas/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getGasUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
-    	
-    	List usages = Statistic.getGasUsage(year);
-    	usages = Statistic.calculateScale(usages);
-        return JsonHelper.createJsonArrFromListArr(usages);
+
+        Map<String, Long> usages = Statistic.getGasUsage(formatYear(year));
+
+        return JsonHelper.createJsonObject(
+                new HashMap<String, String>() {
+            {
+                put("usage", JsonHelper.createJsonArray(usages));
+                put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+            }
+        });
     }
-    
+
     @Path("gas/{company}/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getGasUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
-    	
-    	List usages = Statistic.getGasUsage(company, year);
-    	usages = Statistic.calculateScale(usages);
-        return JsonHelper.createJsonArrFromListArr(usages);
-    }
-    
-    @Path("test/{year}")
-    @GET
-    public String test(@PathParam("year") String year) throws SQLException, JSONException, IOException {
-    	String _return = "";
-    	long avarageUsage, range = -1;
-    	long total = 0;
-    	int size = 0, amountOfFirstRange = 0, amountOfSecondRange = 0, amountOfThirdRange = 0;
-    	List usages = Statistic.getGasUsage(year);
-    	size = usages.size();
-    	for(int i=0; i< size; i ++){
-    		Object[] _arr = (Object[]) usages.get(i);
-    		total+= ((BigDecimal) _arr[1]).longValue();
-    		_return += _arr[0] + " "  + _arr[1] + "<br>";
-    	}
-    	avarageUsage = (total/size);
-    	range = avarageUsage*2/3;
-    	
-    	for(int i=0; i< size; i ++){
-    		Object[] _arr = (Object[]) usages.get(i);
-    		long _range = ((BigDecimal) _arr[1]).longValue();
-    		if(_range < range){
-    			amountOfFirstRange++;
-    		}else if(_range > range && _range < range*2){
-    			amountOfSecondRange++;
-    		}else if (_range > range*2){
-    			amountOfThirdRange++;
-    		}
-    	}
-    	
-    	
-    	_return = "avarage is: "+avarageUsage + " <br> " 
-    	        + " size is: " + size + " <br> " 
-    	        + "total is: " + total + " <br> "
-    	        + "amountOfFirstRange is: " + amountOfFirstRange + " <br> "
-    	        + "amountOfSecondRange is: " + amountOfSecondRange + " <br> "
-    	        + "amountOfThirdRange is: " + amountOfThirdRange + " <br> "
-    	        +_return;
-        return _return;
-    }*/
 
+        Map<String, Long> usages = Statistic.getGasUsage(company, formatYear(year));
+
+        return JsonHelper.createJsonObject(
+                new HashMap<String, String>() {
+            {
+                put("usage", JsonHelper.createJsonArray(usages));
+                put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+            }
+        });
+    }
 }

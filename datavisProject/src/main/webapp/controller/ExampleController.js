@@ -1,4 +1,4 @@
-app.registerCtrl('ExampleController', function ($scope, $http) {
+app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
     var self = this;
 
@@ -10,78 +10,153 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
     var tooltipDiv;
 
+    var color = d3.scale.linear()
+            .domain([0, 40000000, 80000000, 120000000])
+            .range(["Lightblue", "green", "yellow", "red"]);
 
     self.scale = 5400;
 
-    $scope.years = [2009, 2010, 2012, 2013, 2014, 2015];
+    $scope.canceler = null;
+    $scope.years = [
+        {"id": 2009, "name": "2009", "assignable": true},
+        {"id": 2010, "name": "2010", "assignable": true},
+        {"id": 2011, "name": "2011", "assignable": true},
+        {"id": 2012, "name": "2012", "assignable": true},
+        {"id": 2013, "name": "2013", "assignable": true},
+        {"id": 2014, "name": "2014", "assignable": true},
+        {"id": 2015, "name": "2015", "assignable": true}
+    ];
+    $scope.preselectYears = {years: []};
     $scope.selectedYear = "Select a year...";
+    $scope.selected_years = [];
 
-    $scope.selectedCompany = "Select a energy company...";
-    $scope.companies = ["Liander", "Enexis", "Endinet"];
+    $scope.companies = [
+        {"id": "Liander", "name": "Liander", "assignable": true},
+        {"id": "Enexis", "name": "Enexis", "assignable": true},
+        {"id": "Endinet", "name": "Endinet", "assignable": true}
+    ];
+    $scope.preselectCompanies = {companies: []};
+    $scope.selectedcompany = "Select a energy company...";
+    $scope.selected_companies = [];
 
-    self.requestData = function (year, company) {
+    $scope.type = 'elk';
+
+    $scope.timeouthandler = function () {
+        if ($scope.canceler === null) {
+            $scope.canceler = $q.defer();
+        } else {
+            $scope.canceler.resolve();
+            $scope.canceler = $q.defer();
+        }
+    };
+
+    self.requestDataCompany = function (year, company) {
+        d3.select("svg.datavisPannel").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
+
+        $scope.timeouthandler();
+
         $http({
+            timeout: $scope.canceler.promise,
             method: 'GET',
-            url: 'resources/data/elk/' + company + '/' + year
+            url: 'resources/data/' + $scope.type + '/' + company + '/' + year
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
+            self.usage = response.data.usage;
             self.draw();
             d3.select(".spinner").remove();
         }, function errorCallback(response) {
-            console.log("oh no it went wong -.-!");
+            console.log("oh no it went wong -.-! companychange");
             d3.select(".spinner").remove();
         });
 
     };
 
     self.requestData = function (year) {
+        d3.select("svg.datavisPannel").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
+        $scope.timeouthandler();
+
         $http({
+            timeout: $scope.canceler.promise,
             method: 'GET',
-            url: 'resources/data/elk/' + year
+            url: 'resources/data/' + $scope.type + '/' + year
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
+            self.usage = response.data.usage;
             self.draw();
             d3.select(".spinner").remove();
         }, function errorCallback(response) {
-            console.log("oh no it went wong =C!");
+            console.log("oh no it went wong -.-! yearchange");
             d3.select(".spinner").remove();
         });
 
     };
 
     $scope.onYearChange = function (year) {
-        $scope.selectedYear = year;
+        if (year.length === 0) {
+            year = '0';
+        } else {
+            year = year.toString().substring(0, year.toString().length);
+        }
 
-        if ($scope.selectedCompany === "Select a energy company...") {
+        if ($scope.selected_companies.length === 0) {
             console.log("filter year: " + year + ", comp: all");
             self.requestData(year);
         } else {
-            console.log("filter year: " + year + ", comp: " + $scope.selectedCompany);
-            self.requestData(year, $scope.selectedCompany);
+            console.log("filter year: " + year + ", comp: " + $scope.selected_companies.toString());
+            self.requestDataCompany(year, $scope.selected_companies.toString());
         }
     };
 
     $scope.onCompanyChange = function (company) {
-        $scope.selectedCompany = company;
-        if ($scope.selectedYear !== "Select a year...") {
-            self.requestDataCompany($scope.selectedYear, company);
+        if (company.toString().length === 0) {
+            if ($scope.selected_years.length === 0) {
+                console.log("filter year: 0, comp: all");
+                self.requestData("0");
+            } else {
+                console.log("filter year: " + $scope.selected_years + ", comp: all");
+                self.requestData($scope.selected_years);
+            }
         } else {
-            alert("Pleas select a year");
+            if ($scope.selected_years.length === 0) {
+                console.log("filter year: 0, comp: " + $scope.selected_companies.toString());
+                self.requestDataCompany("0", company.toString());
+            } else {
+                console.log("filter year: " + $scope.selected_years + ", comp: " + $scope.selected_companies.toString());
+                self.requestDataCompany($scope.selected_years, company.toString());
+            }
         }
-
     };
 
     self.init = function () {
-        console.log("test");
-//        d3.select(".map").style("width", width);
         d3.selectAll(".map").attr("style", "height:" + height + "px;");
-        self.requestData(0);
+
+        $scope.$watch('selected_years.length', function () {
+            $scope.onYearChange($scope.selected_years);
+        });
+
+        $scope.$watch('selected_companies.length', function () {
+            $scope.onCompanyChange($scope.selected_companies);
+        });
+
+        $scope.$watch('type', function () {
+            if ($scope.selected_companies.toString().length > 0) {
+                $scope.onCompanyChange($scope.selected_companies);
+            } else {
+                $scope.onYearChange($scope.selected_years);
+            }
+        });
+
+        var sampleCategoricalData = ["Something", "Something Else", "Another", "This", "That", "Etc"]
+        var sampleOrdinal = d3.scale.category20().domain(sampleCategoricalData);
+        var verticalLegend = d3.svg.legend().labelFormat("none").cellPadding(5).orientation("vertical").units("Usage (in sjv)").cellWidth(25).cellHeight(18).inputScale(color).cellStepping(10);
+        d3.select("svg.legend").attr("height", 120).attr("font-weight","700").append("g").attr("class", "legend").call(verticalLegend).attr("transform","translate(0,25)");
+        d3.selectAll(".legend text").attr("fill", "blanchedalmond");
     };
 
     self.draw = function () {
@@ -89,7 +164,7 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                 .scale(this.scale)
                 .translate([width / 2, height / 2]);
 
-        d3.select("svg").remove();
+        d3.select("svg.datavisPannel").remove();
         var svg = d3.selectAll(".map").append("svg")
                 .attr("width", width)
                 .attr("height", height)
@@ -120,8 +195,8 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
                     })
                     .attr("fill", function (d) {
                         var col = d.properties.fill;
-                        if (typeof self.usagescale !== "undefined" && self.usagescale.hasOwnProperty(d.properties.postcode)) {
-                            col = self.usagescale[d.properties.postcode];
+                        if (typeof self.usage !== "undefined" && self.usage.hasOwnProperty(d.properties.postcode)) {
+                            col = color(self.usage[d.properties.postcode]);
                         }
                         return col;
                     })
@@ -194,4 +269,3 @@ app.registerCtrl('ExampleController', function ($scope, $http) {
     };
     self.init();
 });
-
