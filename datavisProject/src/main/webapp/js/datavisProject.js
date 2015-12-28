@@ -6,12 +6,26 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
 
         function requireCtrl(name) {
             return ['$q', '$rootScope', function ($q, $rootScope) {
+                    if (name.indexOf(',') !== -1) {
+                        name = name.split(',');
+                    } else {
+                        name = [name];
+                    }
+                    
                     var deferred = $q.defer();
-                    $.getScript('controller/' + name + '.js').success(function () {
-                        $rootScope.$apply(function () {
-                            deferred.resolve();
+                    var done = 0;
+                    
+                    for(i=0; i< name.length;i++){
+                        $.getScript('controller/' + name[i] + '.js').success(function () {
+                            $rootScope.$apply(function () {
+                                done++;
+                                if(done === i){
+                                    deferred.resolve();
+                                }
+                            });
                         });
-                    });
+                    }
+                    
                     return deferred.promise;
                 }];
         }
