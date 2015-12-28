@@ -169,6 +169,9 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         d3.select("svg.legend").attr("height", 120).call(legend);
         d3.select("svg.legend .legendTitle").attr("transform", "translate(0,15)");
         d3.selectAll(".legend text").attr("font-weight", "700").attr("fill", "blanchedalmond");
+        d3.selectAll(".legendCells .cell>.swatch")  
+                .style("stroke", "blanchedalmond")
+                .style("stroke-width", 1);
     };
 
     self.draw = function () {
