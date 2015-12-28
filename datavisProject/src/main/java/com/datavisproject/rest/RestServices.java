@@ -16,6 +16,13 @@ import org.codehaus.jettison.json.JSONException;
 @Path("data")
 public class RestServices {
 
+    @Path("elkmax")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public String getElkUsage() throws SQLException, JSONException, IOException {
+        return String.valueOf(Statistic.getMaxElkUsage());
+    }
+    
     @Path("elk/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET

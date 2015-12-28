@@ -17,12 +17,12 @@ public class Statistic {
     
     public static int getMaxElkUsage(){
         String query = "call getMaxUsage('ELK');";
-    	return em.createNativeQuery(query).getFirstResult();
+    	return ((BigDecimal)em.createNativeQuery(query).getResultList().get(0)).intValue();
     }
 
     public static int getMaxGasUsage(){
         String query = "call getMaxUsage('GAS');";
-    	return em.createNativeQuery(query).getFirstResult();
+    	return ((BigDecimal)em.createNativeQuery(query).getResultList().get(0)).intValue();
     }
     
     public static Map<String, Long> getElkUsage(String year) throws NumberFormatException{
