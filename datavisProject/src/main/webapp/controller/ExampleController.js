@@ -11,8 +11,8 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     var tooltipDiv;
 
     var color = d3.scale.quantize()
-            .domain([0, 40000000, 80000000, 120000000])
-            .range(["rgb(63, 191, 191)", "rgb(63, 191, 63)", "rgb(222, 222, 57)", "rgb(255, 0, 0)"]);
+            .domain([0, 30000000, 80000000, 120000000, 160000000])            
+            .range(["lightblue", "lightgreen", "yellow", "orange", "red"]);
 
     self.scale = 5400;
 
