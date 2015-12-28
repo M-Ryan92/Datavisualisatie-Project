@@ -217,10 +217,11 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                     .attr("stroke", function (d) {
                         return behaviour.get(d).stroke();
                     })
-                    .attr("transform", function (d){
-                        return behaviour.get(d).radius([width, height]);
-                    })
                     .attr("d", path)
+                    .attr("transform", function (d){
+                        return behaviour.get(d).radius();
+                    })
+//                    .attr("d", path)
                     .on("mouseover", function (d) {
                         behaviour.get(d).mouseover();
                     })
