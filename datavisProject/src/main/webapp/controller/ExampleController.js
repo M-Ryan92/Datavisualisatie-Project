@@ -51,6 +51,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     };
 
     self.requestDataCompany = function (year, company) {
+        console.log("year and company");
         d3.select("svg.datavisPannel").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
@@ -75,6 +76,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     };
 
     self.requestData = function (year) {
+        console.log("year only");
         d3.select("svg.datavisPannel").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");

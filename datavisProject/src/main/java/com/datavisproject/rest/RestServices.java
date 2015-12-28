@@ -16,28 +16,12 @@ import org.codehaus.jettison.json.JSONException;
 @Path("data")
 public class RestServices {
 
-    private String formatYear(String year) {
-        String paramLine = "";
-        if (year.contains(",")) {
-            String[] split = year.split(",");
-            for (String s : split) {
-                paramLine += "´" + s + "´,";
-            }
-        }
-        if (paramLine.length() == 0) {
-            paramLine = year;
-        } else {
-            paramLine = paramLine.substring(0, paramLine.length() - 1);
-        }
-        return paramLine;
-    }
-
     @Path("elk/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public String getElkUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
 
-        Map<String, Long> usages = Statistic.getElkUsage(formatYear(year));
+        Map<String, Long> usages = Statistic.getElkUsage(year);
 
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
@@ -53,7 +37,7 @@ public class RestServices {
     @GET
     public String getElkUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
 
-        Map<String, Long> usages = Statistic.getElkUsage(company, formatYear(year));
+        Map<String, Long> usages = Statistic.getElkUsage(company, year);
 
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
@@ -69,7 +53,7 @@ public class RestServices {
     @GET
     public String getGasUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
 
-        Map<String, Long> usages = Statistic.getGasUsage(formatYear(year));
+        Map<String, Long> usages = Statistic.getGasUsage(year);
 
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
@@ -85,7 +69,7 @@ public class RestServices {
     @GET
     public String getGasUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
 
-        Map<String, Long> usages = Statistic.getGasUsage(company, formatYear(year));
+        Map<String, Long> usages = Statistic.getGasUsage(company, year);
 
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
