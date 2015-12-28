@@ -32,7 +32,7 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
 
         $routeProvider.when('/', {
             templateUrl: 'view/example.html',
-            resolve: requireCtrl('ExampleController')
+            resolve: requireCtrl('ExampleController,behaviour')
         })
                 .when('/example', {
                     templateUrl: 'view/example.html',

@@ -11,7 +11,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     var tooltipDiv;
 
     var color = d3.scale.quantize()
-            .domain([0, 30000000, 80000000, 120000000, 160000000])            
+            .domain([0, 30000000, 80000000, 120000000, 160000000])
             .range(["lightblue", "lightgreen", "yellow", "orange", "red"]);
 
     self.scale = 5400;
@@ -96,7 +96,6 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             console.log("oh no it went wong -.-! yearchange");
             d3.select(".spinner").remove();
         });
-
     };
 
     $scope.onYearChange = function (year) {
@@ -167,11 +166,11 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                 })
                 .useClass(false)
                 .scale(color);
-        
+
         d3.select("svg.legend").attr("height", 120).call(legend);
         d3.select("svg.legend .legendTitle").attr("transform", "translate(0,15)");
         d3.selectAll(".legend text").attr("font-weight", "700").attr("fill", "blanchedalmond");
-        d3.selectAll(".legendCells .cell>.swatch")  
+        d3.selectAll(".legendCells .cell>.swatch")
                 .style("stroke", "blanchedalmond")
                 .style("stroke-width", 1);
     };
@@ -184,7 +183,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         d3.select("svg.datavisPannel").remove();
         var svg = d3.selectAll(".map").append("svg")
                 .attr("width", width)
-                .attr("style", "height:" + (height -2) + "px;")
+                .attr("style", "height:" + (height - 2) + "px;")
                 .attr("class", "datavisPannel");
 
         var path = d3.geo.path()
@@ -194,7 +193,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
         d3.json("map.json", function (error, nld) {
             nld.features.forEach(function (feature) {
-                if (feature.geometry.type === "Polygon"){
+                if (feature.geometry.type === "Polygon") {
                     feature.geometry.coordinates.forEach(function (coords) {
                         coords.reverse();
                     });
@@ -207,48 +206,29 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                     .append("path")
                     .attr("class", "boundary")
                     .attr("id", function (d) {
-                        return d.properties.postcode;
+                        return behaviour.get(d).id();
                     })
                     .attr("fill", function (d) {
-                        var col = d.properties.fill;
-                        if (typeof self.usage !== "undefined" && self.usage.hasOwnProperty(d.properties.postcode)) {
-                            col = color(self.usage[d.properties.postcode]);
-                        }
-                        return col;
+                        return behaviour.get(d).fill(color, self.usage);
                     })
                     .attr("stroke-width", function (d) {
-                        return d.properties['stroke-width'];
+                        return behaviour.get(d).strokeWidth();
                     })
                     .attr("stroke", function (d) {
-                        return d.properties.stroke;
+                        return behaviour.get(d).stroke();
+                    })
+                    .attr("transform", function (d){
+                        return behaviour.get(d).radius([width, height]);
                     })
                     .attr("d", path)
                     .on("mouseover", function (d) {
-                        var element = d3.selectAll("path[id='" + d.properties.postcode + "']");
-                        element.style("opacity", .8);
-                        element.attr("stroke-width", 0);
-
-                        d3.select('.map').selectAll('.tooltip').remove();
-                        tooltipDiv = d3.select('.map').append('div').attr('class', 'tooltip');
-                        var absoluteMousePos = d3.mouse(d3.select('.map').node());
-                        tooltipDiv.style('left', (absoluteMousePos[0] + 30) + 'px')
-                                .style('top', (absoluteMousePos[1] - 30) + 'px');
-                        var tooltipText = d.properties.postcode;
-                        tooltipDiv.html(tooltipText);
-
+                        behaviour.get(d).mouseover();
                     })
                     .on("mousemove", function (d) {
-                        var absoluteMousePos = d3.mouse(d3.select('.map').node());
-                                    tooltipDiv.style('left', (absoluteMousePos[0] + 30) + 'px')
-                                                .style('top', (absoluteMousePos[1] - 30) + 'px');
-                                    var tooltipText = d.properties.postcode;
-                                    tooltipDiv.html(tooltipText);
+                        behaviour.get(d).mousemove();
                     })
                     .on("mouseout", function (d) {
-                        var element = d3.selectAll("path");
-                        element.style("opacity", 1);
-                        element.attr("stroke-width", d.properties['stroke-width']);
-                        tooltipDiv.remove();
+                        behaviour.get(d).mouseout();
                     });
         });
 
