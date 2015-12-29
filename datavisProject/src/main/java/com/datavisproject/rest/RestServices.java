@@ -5,6 +5,7 @@ import com.datavisproject.util.JsonHelper;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,12 +30,14 @@ public class RestServices {
     public String getElkUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
 
         Map<String, Long> usages = Statistic.getElkUsage(year);
-
+        Map<String, List> elkNetworkPoints = Statistic.getElkNetworkPoints(year, "0");
+        
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {
                 put("usage", JsonHelper.createJsonArray(usages));
                 put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+                put("networkPoints" , JsonHelper.createJsonObject(elkNetworkPoints));
             }
         });
     }
@@ -45,12 +48,14 @@ public class RestServices {
     public String getElkUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
 
         Map<String, Long> usages = Statistic.getElkUsage(company, year);
-
+        Map<String, List> elkNetworkPoints = Statistic.getElkNetworkPoints(year, company);
+        
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {
                 put("usage", JsonHelper.createJsonArray(usages));
                 put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+                put("networkPoints" , JsonHelper.createJsonObject(elkNetworkPoints));
             }
         });
     }
@@ -61,12 +66,13 @@ public class RestServices {
     public String getGasUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
 
         Map<String, Long> usages = Statistic.getGasUsage(year);
-
+        Map<String, List> gasNetworkPoints = Statistic.getGasNetworkPoints(year, "0");                
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {
                 put("usage", JsonHelper.createJsonArray(usages));
                 put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+                put("networkPoints" , JsonHelper.createJsonObject(gasNetworkPoints));
             }
         });
     }
@@ -77,12 +83,14 @@ public class RestServices {
     public String getGasUsage(@PathParam("company") String company, @PathParam("year") String year) throws SQLException, JSONException, IOException {
 
         Map<String, Long> usages = Statistic.getGasUsage(company, year);
-
+        Map<String, List> gasNetworkPoints = Statistic.getGasNetworkPoints(year, company);                
+        
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {
                 put("usage", JsonHelper.createJsonArray(usages));
                 put("usagescale", JsonHelper.createJsonArray(Statistic.calculateScale(usages)));
+                put("networkPoints" , JsonHelper.createJsonObject(gasNetworkPoints));
             }
         });
     }

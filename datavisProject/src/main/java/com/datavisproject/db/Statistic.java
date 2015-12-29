@@ -1,132 +1,176 @@
 package com.datavisproject.db;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
 public class Statistic {
-	private static EntityManager em = Persistence.createEntityManagerFactory("datavis").createEntityManager();
+
+    private static EntityManager em = Persistence.createEntityManagerFactory("datavis").createEntityManager();
 
     public Statistic() {
-        
-    }
-    
-    public static int getMaxElkUsage(){
-        String query = "call getMaxUsage('ELK');";
-    	return ((BigDecimal)em.createNativeQuery(query).getResultList().get(0)).intValue();
+
     }
 
-    public static int getMaxGasUsage(){
+    public static int getMaxElkUsage() {
+        String query = "call getMaxUsage('ELK');";
+        return ((BigDecimal) em.createNativeQuery(query).getResultList().get(0)).intValue();
+    }
+
+    public static int getMaxGasUsage() {
         String query = "call getMaxUsage('GAS');";
-    	return ((BigDecimal)em.createNativeQuery(query).getResultList().get(0)).intValue();
+        return ((BigDecimal) em.createNativeQuery(query).getResultList().get(0)).intValue();
     }
-    
-    public static Map<String, Long> getElkUsage(String year) throws NumberFormatException{
-    	List usages;
-    	String query = "call getUsage(?, 'ELK');";
-    	usages = em.createNativeQuery(query)
-    			.setParameter(1, year)
-    			.getResultList();
-    	
-    	
-    	return convertListtoMap(usages);
+
+    public static Map<String, List> getElkNetworkPoints(String year, String companies) {
+        String query = "call getNetwork(?, ?, 'ELK');";
+        List usages = em.createNativeQuery(query)
+                .setParameter(1, year)
+                .setParameter(2, companies)
+                .getResultList();
+
+        Map<String, List> map = new HashMap<String, List>();
+        for (int i = 0; i < usages.size(); i++) {
+            Object[] _arr = (Object[]) usages.get(i);
+            if (map.isEmpty()) {
+                map.put(_arr[0].toString(), new ArrayList());
+                map.get(_arr[0].toString()).add(_arr[1].toString());
+            } else if (map.containsKey(_arr[0].toString())) {
+                map.get(_arr[0].toString()).add(_arr[1].toString());
+            } else {
+                map.put(_arr[0].toString(), new ArrayList());
+                map.get(_arr[0].toString()).add(_arr[1].toString());
+            }
+
+        }
+        return map;
     }
-    
-    public static Map<String, Long> getElkUsage(String company, String year) throws NumberFormatException{
-    	List usages;
-    	String query = "call getNetBeheerUsage(?, ?, 'ELK');";
-    	usages = em.createNativeQuery(query)
-    			.setParameter(1, company)
-    			.setParameter(2, year)
-    			.getResultList();
-    	return convertListtoMap(usages);
+    public static Map<String, List> getGasNetworkPoints(String year, String companies) {
+        String query = "call getNetwork(?, ?, 'GAS');";
+        List usages = em.createNativeQuery(query)
+                .setParameter(1, year)
+                .setParameter(2, companies)
+                .getResultList();
+
+        Map<String, List> map = new HashMap<String, List>();
+        for (int i = 0; i < usages.size(); i++) {
+            Object[] _arr = (Object[]) usages.get(i);
+            if (map.isEmpty()) {
+                map.put(_arr[0].toString(), new ArrayList());
+                map.get(_arr[0].toString()).add(_arr[1].toString());
+            } else if (map.containsKey(_arr[0].toString())) {
+                map.get(_arr[0].toString()).add(_arr[1].toString());
+            } else {
+                map.put(_arr[0].toString(), new ArrayList());
+                map.get(_arr[0].toString()).add(_arr[1].toString());
+            }
+
+        }
+        return map;
     }
-    
-    public static Map<String, Long> getGasUsage(String year) throws NumberFormatException{
-    	List usages;
-    	String query = "call getUsage(?, 'GAS');";
-    	usages = em.createNativeQuery(query)
-    			.setParameter(1, year)
-    			.getResultList();
-    	return convertListtoMap(usages);
+
+    public static Map<String, Long> getElkUsage(String year) throws NumberFormatException {
+        List usages;
+        String query = "call getUsage(?, 'ELK');";
+        usages = em.createNativeQuery(query)
+                .setParameter(1, year)
+                .getResultList();
+
+        return convertListtoMap(usages);
     }
-    
-    
-    
-    public static Map<String, Long> getGasUsage(String company, String year) throws NumberFormatException{
-    	List usages;
-    	String query = "call getNetBeheerUsage(?, ?, 'GAS');";
-    	usages = em.createNativeQuery(query)
-    			.setParameter(1, company)
-    			.setParameter(2, year)
-    			.getResultList();
-    	return convertListtoMap(usages);
+
+    public static Map<String, Long> getElkUsage(String company, String year) throws NumberFormatException {
+        List usages;
+        String query = "call getNetBeheerUsage(?, ?, 'ELK');";
+        usages = em.createNativeQuery(query)
+                .setParameter(1, company)
+                .setParameter(2, year)
+                .getResultList();
+        return convertListtoMap(usages);
     }
-    
-    private static Map<String, Long> convertListtoMap(List list){
-    	Map<String, Long> map = new HashMap<String, Long>();
-    	
-    	for(int i= 0; i< list.size(); i++){
-    		Object[] _arr = (Object[]) list.get(i);
-    		map.put(_arr[0].toString(), ((BigDecimal)_arr[1]).longValue());
-    	}
-    	
-    	return map;
+
+    public static Map<String, Long> getGasUsage(String year) throws NumberFormatException {
+        List usages;
+        String query = "call getUsage(?, 'GAS');";
+        usages = em.createNativeQuery(query)
+                .setParameter(1, year)
+                .getResultList();
+        return convertListtoMap(usages);
     }
-    
-    public static Map<String, String> calculateScale(Map<String, Long> usages){
-    	Map<String, String> newMap = new HashMap<String, String>();
-        if(usages.isEmpty()){
+
+    public static Map<String, Long> getGasUsage(String company, String year) throws NumberFormatException {
+        List usages;
+        String query = "call getNetBeheerUsage(?, ?, 'GAS');";
+        usages = em.createNativeQuery(query)
+                .setParameter(1, company)
+                .setParameter(2, year)
+                .getResultList();
+        return convertListtoMap(usages);
+    }
+
+    private static Map<String, Long> convertListtoMap(List list) {
+        Map<String, Long> map = new HashMap<String, Long>();
+
+        for (int i = 0; i < list.size(); i++) {
+            Object[] _arr = (Object[]) list.get(i);
+            map.put(_arr[0].toString(), ((BigDecimal) _arr[1]).longValue());
+        }
+
+        return map;
+    }
+
+    public static Map<String, String> calculateScale(Map<String, Long> usages) {
+        Map<String, String> newMap = new HashMap<String, String>();
+        if (usages.isEmpty()) {
             return newMap;
         }
-    	long avarageUsage, range = -1;
-    	long total = 0;
-    	int size = 0, amountOfFirstRange = 0, amountOfSecondRange = 0, amountOfThirdRange = 0;
-    	size = usages.size();
-    	
+        long avarageUsage, range = -1;
+        long total = 0;
+        int size = 0, amountOfFirstRange = 0, amountOfSecondRange = 0, amountOfThirdRange = 0;
+        size = usages.size();
+
         Iterator it = usages.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            total += (long)pair.getValue();
+            total += (long) pair.getValue();
             //it.remove(); // avoids a ConcurrentModificationException
         }
-        
-    	avarageUsage = (total/size);
-    	range = avarageUsage*2/3;
-    	System.out.println("range is: " + range);
-    	Iterator it2 = usages.entrySet().iterator();
+
+        avarageUsage = (total / size);
+        range = avarageUsage * 2 / 3;
+        System.out.println("range is: " + range);
+        Iterator it2 = usages.entrySet().iterator();
         while (it2.hasNext()) {
             Map.Entry pair = (Map.Entry) it2.next();
             long _range = (long) pair.getValue();
-    		String strRange = "";
-    		if(_range < range){
-    			amountOfFirstRange++;
-    			strRange = "#BFBF3F";
-    		}else if(_range > range && _range < range*2){
-    			amountOfSecondRange++;
-    			strRange = "#BF7F3F";
-    		}else if (_range > range*2){
-    			amountOfThirdRange++;
-    			strRange = "#BF3F3F";
-    		}
+            String strRange = "";
+            if (_range < range) {
+                amountOfFirstRange++;
+                strRange = "#BFBF3F";
+            } else if (_range > range && _range < range * 2) {
+                amountOfSecondRange++;
+                strRange = "#BF7F3F";
+            } else if (_range > range * 2) {
+                amountOfThirdRange++;
+                strRange = "#BF3F3F";
+            }
             newMap.put(pair.getKey().toString(), strRange);
         }
-    	
-    	System.out.println("avarage is: "+avarageUsage + " \n " 
-    	        + " size is: " + size + " \n " 
-    	        + "total is: " + total + " \n "
-    	        + "amountOfFirstRange is: " + amountOfFirstRange + " \n "
-    	        + "amountOfSecondRange is: " + amountOfSecondRange + " \n "
-    	        + "amountOfThirdRange is: " + amountOfThirdRange + " \n ");
-    	return newMap;
+
+        System.out.println("avarage is: " + avarageUsage + " \n "
+                + " size is: " + size + " \n "
+                + "total is: " + total + " \n "
+                + "amountOfFirstRange is: " + amountOfFirstRange + " \n "
+                + "amountOfSecondRange is: " + amountOfSecondRange + " \n "
+                + "amountOfThirdRange is: " + amountOfThirdRange + " \n ");
+        return newMap;
     }
-    
-    
-    
 
     /*
     public static long getElkUsage(String postalcode, String year) throws NumberFormatException{
@@ -386,5 +430,5 @@ public class Statistic {
     	return ranges;
     }
     
-    */
+     */
 }

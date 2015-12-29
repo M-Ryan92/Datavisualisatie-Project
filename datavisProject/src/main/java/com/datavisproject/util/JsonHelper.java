@@ -10,12 +10,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class JsonHelper {
 
-    public static String createJsonObject(Map<String, String> items) throws IOException {
+    public static String createJsonObject(Map<String, ?> items) throws IOException {
+
         String jsonObject = "{";
         int itemRef = 0;
         for (String key : items.keySet()) {
-            jsonObject += "\""+key + "\":" + items.get(key);
-
+            if (items.get(key) instanceof String) {
+                jsonObject += "\"" + key + "\":" + items.get(key);
+            } else if (items.get(key) instanceof List) {
+                jsonObject += "\"" + key + "\":" + createJsonArray((List) items.get(key));
+            }
             if (items.size() - 1 > itemRef) {
                 jsonObject += ",";
             }
@@ -42,19 +46,19 @@ public class JsonHelper {
         }
         return jsonArray;
     }
-    
-    public static String createJsonArrFromListArr(List list) throws JsonGenerationException, JsonMappingException, IOException{
-    	String jsonArr = "[";
-    	ObjectMapper mapper = new ObjectMapper();
-    	for(int i = 0; i < list.size(); i ++){
-    		Object[] _arr = (Object[]) list.get(i);
-    		if(i+1 < list.size()){
-    			jsonArr += "[" + mapper.writeValueAsString(_arr[0]) + "," + mapper.writeValueAsString(_arr[1])  + "]" + ",";
-    		} else {
-    			jsonArr += "[" + mapper.writeValueAsString(_arr[0]) + "," + mapper.writeValueAsString(_arr[1])  + "]" + "]";
-    		}
-    	}
-    	return jsonArr;
+
+    public static String createJsonArrFromListArr(List list) throws JsonGenerationException, JsonMappingException, IOException {
+        String jsonArr = "[";
+        ObjectMapper mapper = new ObjectMapper();
+        for (int i = 0; i < list.size(); i++) {
+            Object[] _arr = (Object[]) list.get(i);
+            if (i + 1 < list.size()) {
+                jsonArr += "[" + mapper.writeValueAsString(_arr[0]) + "," + mapper.writeValueAsString(_arr[1]) + "]" + ",";
+            } else {
+                jsonArr += "[" + mapper.writeValueAsString(_arr[0]) + "," + mapper.writeValueAsString(_arr[1]) + "]" + "]";
+            }
+        }
+        return jsonArr;
     }
-    
+
 }
