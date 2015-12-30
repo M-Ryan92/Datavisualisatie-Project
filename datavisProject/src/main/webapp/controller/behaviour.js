@@ -2,8 +2,8 @@ var behaviour = {};
 
 behaviour.get = function (d) {
 
-    if (d.properties === undefined) {
-
+    if (d.geometry.type === "LineString") {
+        lineString.p = d;
         return lineString;
     }
     ;
@@ -28,15 +28,14 @@ lineString.id = function () {
 };
 
 lineString.fill = function (func, usage) {
-    return "#000";
 };
 
 lineString.strokeWidth = function () {
-    return .5;
+    return .8;
 };
 
 lineString.stroke = function () {
-    return "blue";
+    return lineString.p.properties.color;
 };
 
 lineString.radius = function () {

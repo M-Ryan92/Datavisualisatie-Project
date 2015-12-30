@@ -12,7 +12,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
     var color = d3.scale.quantize()
             .domain([0, 30000000, 80000000, 120000000, 160000000])
-            .range(["lightblue", "lightgreen", "yellow", "orange", "red"]);
+            .range(["#9FA0A2", "#9BAEC5", "#4372AA", "#0C61C6", "#00489E"]);
 
     self.scale = 5400;
 
@@ -207,6 +207,10 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             console.log(pointList);
             var last = null;
             var next = null;
+            var lineColors = {};
+            lineColors.Endinet = "#F31A63";
+            lineColors.Enexis = "#3539DF";
+            lineColors.Liander = "#34BC93";
             for (var npC in self.networkPoints) {
                 console.log(npC);
                 self.networkPoints[npC].forEach(function (np) {
@@ -224,7 +228,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
                         console.log(np + last + next);
                         if (pointList.hasOwnProperty(last) && pointList.hasOwnProperty(next)) {
-                            nld.features.push(line([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]]));
+                            nld.features.push(line([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]], lineColors[npC]));
                         }
 
                         last = next;
@@ -235,7 +239,8 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                         last = np;
                     }
                 });
-            };
+            }
+            ;
 
             projection.center([(nld.bbox[0] + nld.bbox[2]) / 2, (nld.bbox[1] + nld.bbox[3]) / 2]);
             g.selectAll("path")

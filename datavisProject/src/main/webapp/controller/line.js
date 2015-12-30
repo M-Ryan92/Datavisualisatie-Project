@@ -1,8 +1,11 @@
 var line;
 
-line = function (s, e) {
+line = function (s, e, c) {
     var feature = {};
     feature.type = "Feature";
+    feature.properties = {};
+    feature.properties.color = c;
+    
     feature.geometry = {};
     feature.geometry.type = "LineString";
     feature.geometry.coordinates = [];
