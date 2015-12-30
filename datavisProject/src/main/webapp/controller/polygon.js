@@ -4,6 +4,7 @@ polygon.tooltipDiv;
 
 polygon.id = function () {
     return polygon.p.properties.postcode;
+    
 };
 
 polygon.fill = function (func, usage) {
@@ -49,7 +50,7 @@ polygon.mousemove = function () {
 };
 
 polygon.mouseout = function () {
-    var element = d3.selectAll("path");
+    var element = d3.selectAll("path[id='" + polygon.p.properties.postcode + "']");
     element.style("opacity", 1);
     element.attr("stroke-width", polygon.p.properties['stroke-width']);
     polygon.tooltipDiv.remove();

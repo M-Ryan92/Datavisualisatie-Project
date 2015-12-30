@@ -51,7 +51,6 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     };
 
     self.requestDataCompany = function (year, company) {
-        console.log("year and company");
         d3.select("svg.datavisPannel").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
@@ -65,6 +64,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
+            self.networkPoints = response.data.networkPoints;
             self.usage = response.data.usage;
             self.draw();
             d3.select(".spinner").remove();
@@ -76,7 +76,6 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     };
 
     self.requestData = function (year) {
-        console.log("year only");
         d3.select("svg.datavisPannel").remove();
         d3.select(".map").append("div")
                 .attr("class", "spinner");
@@ -89,6 +88,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         }).then(function successCallback(response) {
             console.log(response);
             self.usagescale = response.data.usagescale;
+            self.networkPoints = response.data.networkPoints;
             self.usage = response.data.usage;
             self.draw();
             d3.select(".spinner").remove();
@@ -192,13 +192,51 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         var g = svg.append("g");
 
         d3.json("map.json", function (error, nld) {
+            var pointList = {};
             nld.features.forEach(function (feature) {
+                if (feature.geometry.type === "Point") {
+                    pointList[feature.properties.point] = feature.geometry.coordinates;
+                }
+
                 if (feature.geometry.type === "Polygon") {
                     feature.geometry.coordinates.forEach(function (coords) {
                         coords.reverse();
                     });
                 }
             });
+            console.log(pointList);
+            var last = null;
+            var next = null;
+            for (var npC in self.networkPoints) {
+                console.log(npC);
+                self.networkPoints[npC].forEach(function (np) {
+
+                    if (last !== null && next === null) {
+                        next = np;
+
+                        if (pointList.hasOwnProperty(last) === false) {
+                            last += "a";
+                        }
+
+                        if (pointList.hasOwnProperty(next) === false) {
+                            next += "a";
+                        }
+
+                        console.log(np + last + next);
+                        if (pointList.hasOwnProperty(last) && pointList.hasOwnProperty(next)) {
+                            nld.features.push(line([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]]));
+                        }
+
+                        last = next;
+                        next = null;
+                    }
+
+                    if (last === null) {
+                        last = np;
+                    }
+                });
+            };
+
             projection.center([(nld.bbox[0] + nld.bbox[2]) / 2, (nld.bbox[1] + nld.bbox[3]) / 2]);
             g.selectAll("path")
                     .data(nld.features)
@@ -218,10 +256,9 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                         return behaviour.get(d).stroke();
                     })
                     .attr("d", path)
-                    .attr("transform", function (d){
+                    .attr("transform", function (d) {
                         return behaviour.get(d).radius();
                     })
-//                    .attr("d", path)
                     .on("mouseover", function (d) {
                         behaviour.get(d).mouseover();
                     })
@@ -231,6 +268,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                     .on("mouseout", function (d) {
                         behaviour.get(d).mouseout();
                     });
+
         });
 
         var m0, o0;
