@@ -31,7 +31,7 @@ lineString.fill = function (func, usage) {
 };
 
 lineString.strokeWidth = function () {
-    return .8;
+    return 1;
 };
 
 lineString.stroke = function () {

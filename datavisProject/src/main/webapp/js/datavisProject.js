@@ -11,21 +11,21 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
                     } else {
                         name = [name];
                     }
-                    
+
                     var deferred = $q.defer();
                     var done = 0;
-                    
-                    for(i=0; i< name.length;i++){
+
+                    for (i = 0; i < name.length; i++) {
                         $.getScript('controller/' + name[i] + '.js').success(function () {
                             $rootScope.$apply(function () {
                                 done++;
-                                if(done === i){
+                                if (done === i) {
                                     deferred.resolve();
                                 }
                             });
                         });
                     }
-                    
+
                     return deferred.promise;
                 }];
         }

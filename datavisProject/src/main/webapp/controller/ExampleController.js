@@ -1,3 +1,5 @@
+/* global d3, app, behaviour */
+
 app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
     var self = this;
@@ -6,13 +8,12 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     var h = d3.select(".navbar").node().getBoundingClientRect();
     var f = d3.select("footer").node().getBoundingClientRect();
     var t = d3.select("h1").node().getBoundingClientRect();
-    var m = 30 + 20; // margin and border stuff
+    var m = 30 + 20;
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
-    var tooltipDiv;
 
     var color = d3.scale.quantize()
             .domain([0, 30000000, 80000000, 120000000, 160000000])
-            .range(["#9FA0A2", "#9BAEC5", "#4372AA", "#0C61C6", "#00489E"]);
+            .range(["#87CEEB", "#00BFFF", "#4682B4", "#0000FF", "#000080"]);
 
     self.scale = 5400;
 
@@ -208,9 +209,9 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             var last = null;
             var next = null;
             var lineColors = {};
-            lineColors.Endinet = "#F31A63";
-            lineColors.Enexis = "#3539DF";
-            lineColors.Liander = "#34BC93";
+            lineColors.Endinet = "#ffa64d";//orange     "#F31A63";
+            lineColors.Enexis = "#9966ff";//pink         "#3539DF";
+            lineColors.Liander = "#d9ff66";//green      "#34BC93";
             for (var npC in self.networkPoints) {
                 console.log(npC);
                 self.networkPoints[npC].forEach(function (np) {
