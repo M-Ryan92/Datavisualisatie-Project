@@ -1,4 +1,4 @@
-/* global d3, app, behaviour */
+/* global d3, app, behaviour, lineString */
 
 app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
@@ -232,7 +232,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                         }
 
                         if (pointList.hasOwnProperty(last) && pointList.hasOwnProperty(next)) {
-                            nld.features.push(line([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]], lineColors[npC]));
+                            nld.features.push(lineString.makeFeature([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]], lineColors[npC]));
                         }
 
                         last = next;

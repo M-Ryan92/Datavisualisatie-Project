@@ -32,11 +32,11 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
 
         $routeProvider.when('/', {
             templateUrl: 'view/example.html',
-            resolve: requireCtrl('ExampleController,behaviour,polygon,point,line')
+            resolve: requireCtrl('Base_Controller,base/behaviour,base/polygon,base/point,base/lineString')
         })
                 .when('/example', {
                     templateUrl: 'view/example.html',
-                    resolve: requireCtrl('ExampleController')
+                    resolve: requireCtrl('Base_Controller')
                 })
                 .otherwise({
                     redirectTo: "/"
