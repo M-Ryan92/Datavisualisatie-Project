@@ -213,7 +213,6 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             lineColors.Enexis = "#9966ff";//pink         "#3539DF";
             lineColors.Liander = "#d9ff66";//green      "#34BC93";
             for (var npC in self.networkPoints) {
-                console.log(npC);
                 self.networkPoints[npC].forEach(function (np) {
 
                     if (last !== null && next === null) {
@@ -227,7 +226,6 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                             next += "a";
                         }
 
-                        console.log(np + last + next);
                         if (pointList.hasOwnProperty(last) && pointList.hasOwnProperty(next)) {
                             nld.features.push(line([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]], lineColors[npC]));
                         }
