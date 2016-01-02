@@ -71987,7 +71987,7 @@
         "stroke-opacity": 1,
         "fill": "#cacaca",
         "fill-opacity": 1,
-        "postcode": 49
+        "postcode": 48
       },
       "geometry": {
         "type": "Polygon",
@@ -76841,7 +76841,7 @@
         "marker-color": "#7e7e7e",
         "marker-size": "small",
         "marker-symbol": "",
-        "point": "49a"
+        "point": "48"
       },
       "geometry": {
         "type": "Point",
@@ -76863,7 +76863,7 @@
         "marker-color": "#7e7e7e",
         "marker-size": "small",
         "marker-symbol": "",
-        "point": "49b"
+        "point": "49"
       },
       "geometry": {
         "type": "Point",
