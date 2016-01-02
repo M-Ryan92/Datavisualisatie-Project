@@ -1,4 +1,4 @@
-/* global d3, app, behaviour, lineString */
+/* global d3, app, behaviour, lineString, drawHelper, item */
 
 app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
@@ -216,8 +216,9 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             //change the main array points should de drawn as last
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
 
+            drawHelper.pointList = pointList;
             for (var companyNetwork in self.networkPoints) {
-                drawHelper.drawNetwork(self.networkPoints[companyNetwork], pointList, lineColors[companyNetwork]).forEach(function(l){
+                drawHelper.drawNetwork(self.networkPoints[companyNetwork], lineColors[companyNetwork]).forEach(function(l){
                     nld.features.push(l);
                 });
 

@@ -1,8 +1,9 @@
 /* global lineString */
 
 var drawHelper = {};
+drawHelper.pointList;
 
-drawHelper.drawNetwork = function (np, pl, col) {
+drawHelper.drawNetwork = function (np, col) {
 
     var lineArray = [];
     var firstElement = np.shift();
@@ -26,13 +27,13 @@ drawHelper.drawNetwork = function (np, pl, col) {
             var rules = drawHelper.lineRules[fk];
             if (previousKey !== undefined) {
                 if (rules.indexOf(previousKey) !== -1) {
-                    lineArray.push(lineString.makeFeature([pl[fk][0], pl[fk][1]], [pl[previousKey][0], pl[previousKey][1]], col));
+                    lineArray.push(lineString.makeFeature([drawHelper.pointList[fk][0], drawHelper.pointList[fk][1]], [drawHelper.pointList[previousKey][0], drawHelper.pointList[previousKey][1]], col));
                 }
             }
             if (secondKeyList !== undefined) {
                 secondKeyList.forEach(function (sk) {
                     if (rules.indexOf(sk) !== -1) {
-                        lineArray.push(lineString.makeFeature([pl[fk][0], pl[fk][1]], [pl[sk][0], pl[sk][1]], col));
+                        lineArray.push(lineString.makeFeature([drawHelper.pointList[fk][0], drawHelper.pointList[fk][1]], [drawHelper.pointList[sk][0], drawHelper.pointList[sk][1]], col));
                     }
                 });
             }
