@@ -205,7 +205,6 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                     });
                 }
             });
-            console.log(pointList);
             var last = null;
             var next = null;
             var lineColors = {};
@@ -217,32 +216,34 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             //change the main array points should de drawn as last
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
             
-            for (var npC in self.networkPoints) {
-                self.networkPoints[npC].forEach(function (np) {
-
-                    if (last !== null && next === null) {
-                        next = np;
-
-                        if (pointList.hasOwnProperty(last) === false) {
-                            last += "a";
-                        }
-
-                        if (pointList.hasOwnProperty(next) === false) {
-                            next += "a";
-                        }
-
-                        if (pointList.hasOwnProperty(last) && pointList.hasOwnProperty(next)) {
-                            nld.features.push(lineString.makeFeature([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]], lineColors[npC]));
-                        }
-
-                        last = next;
-                        next = null;
-                    }
-
-                    if (last === null) {
-                        last = np;
-                    }
-                });
+            for (var companyNetwork in self.networkPoints) {
+                drawHelper.drawNetwork(self.networkPoints[companyNetwork], pointList);
+                
+//                self.networkPoints[npC].forEach(function (np) {
+//
+//                    if (last !== null && next === null) {
+//                        next = np;
+//
+//                        if (pointList.hasOwnProperty(last) === false) {
+//                            last += "a";
+//                        }
+//
+//                        if (pointList.hasOwnProperty(next) === false) {
+//                            next += "a";
+//                        }
+//
+//                        if (pointList.hasOwnProperty(last) && pointList.hasOwnProperty(next)) {
+//                            nld.features.push(lineString.makeFeature([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]], lineColors[npC]));
+//                        }
+//
+//                        last = next;
+//                        next = null;
+//                    }
+//
+//                    if (last === null) {
+//                        last = np;
+//                    }
+//                });
             };
             
             //add points back into the main array

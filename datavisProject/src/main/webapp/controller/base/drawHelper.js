@@ -1,7 +1,79 @@
 var drawHelper = {};
 
+drawHelper.drawNetwork = function (np, pl) {
+
+    var firstElement = np.shift();
+    var secondElement = np[0];
+
+    var firstKeyList, secondKeyList;
+    console.log(secondElement);
+    var la = drawHelper.lineRules[firstElement];
+
+    if (!drawHelper.lineRules.hasOwnProperty(firstElement)) {
+        firstKeyList = drawHelper.getKeyList(firstElement);
+    }
+
+    if (!drawHelper.lineRules.hasOwnProperty(secondElement)) {
+        secondKeyList = drawHelper.getKeyList(secondElement);
+    }
+
+    if (firstKeyList !== undefined) {
+        var previousKey;
+        firstKeyList.forEach(function (fk) {
+            var rules = drawHelper.lineRules[fk];
+            if (previousKey !== undefined) {
+                if (rules.indexOf(previousKey) !== -1) {
+
+                    drawHelper.createLine(pl[fk], pl[previousKey]);
+
+
+
+                }
+            }
+            if (secondKeyList !== undefined) {
+                secondKeyList.forEach(function (sk) {
+                    if (rules.indexOf(sk) !== -1) {
+                        drawHelper.createLine(pl[fk], pl[sk]);
+
+                    }
+                });
+            }
+            previousKey = fk;
+        });
+    }
+    console.log(firstElement);
+    console.log(la);
+};
+
+drawHelper.getKeyList = function (element) {
+    var kList = [];
+    Object.keys(drawHelper.lineRules).forEach(function (k) {
+        if (k.match(element)) {
+            kList.push(k);
+        }
+    });
+    return kList;
+};
+
+drawHelper.createLine = function (sp, ep) {
+    lineString.makeFeature([sp[0], [sp][1]], [ep[0], [ep][1]]);
+//    lineString.makeFeature([sp[0], pointList[last][1]], [pointList[next][0], pointList[next][1]], lineColors[npC]);
+    console.log(sp, ep);
+};
+
 drawHelper.lineRules = {
-    "15": ["11b", "14a", "19", "20"],
+    "10a": ["10b", "11c", "15", "20"],
+    "10b": ["10a", "11a", "11b", "13a"],
+    "11a": ["10b", "13a", "14a"],
+    "11b": ["10b", "14a", "15"],
+    "11c": ["10a", "13b", "14c", "21", "36"],
+    "12": ["13b", "14b", "36", "37"],
+    "13a": ["10b", "11a", "13b", "14b", "38a"],
+    "13b": ["11c", "12", "13a", "14b", "36"],
+    "14a": ["11a", "11b", "15", "16", "18"],
+    "14b": ["12", "13a", "13b"],
+    "14c": ["11c", "21", "24", "36"],
+    "15": ["10a", "11b", "14a", "19", "20"],
     "16": ["17a", "18", "14a"],
     "17a": ["16", "17b", "18", "87"],
     "17b": ["17a"],
@@ -23,7 +95,7 @@ drawHelper.lineRules = {
     "33": ["29", "32", "42a"],
     "34": ["24", "28", "35", "36", "39", "41", "42b"],
     "35": ["34", "36", "37", "39"],
-    "36": ["11", "12", "13b", "14c", "24", "32", "37"],
+    "36": ["11c", "12", "13b", "14c", "24", "32", "37"],
     "37": ["12", "35", "36", "38a", "38b", "39"],
     "38a": ["13a", "37a", "38b", "82a"],
     "38b": ["37b", "38a", "80"],
