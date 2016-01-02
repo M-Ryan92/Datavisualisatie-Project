@@ -1,4 +1,4 @@
-/* global d3, app, behaviour, lineString */
+/* global d3, app, behaviour, lineString, drawHelper, item */
 
 app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
@@ -211,14 +211,17 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             lineColors.Endinet = "#ffa64d";//orange
             lineColors.Enexis = "#9966ff";//pink/purple
             lineColors.Liander = "#d9ff66";//green
-            
+
             var temp = nld.features.filter(item => item.geometry.type === "Point");
             //change the main array points should de drawn as last
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
-            
+
+            drawHelper.pointList = pointList;
             for (var companyNetwork in self.networkPoints) {
-                drawHelper.drawNetwork(self.networkPoints[companyNetwork], pointList);
-                
+                drawHelper.drawNetwork(self.networkPoints[companyNetwork], lineColors[companyNetwork]).forEach(function(l){
+                    nld.features.push(l);
+                });
+
 //                self.networkPoints[npC].forEach(function (np) {
 //
 //                    if (last !== null && next === null) {
@@ -244,11 +247,12 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 //                        last = np;
 //                    }
 //                });
-            };
-            
+            }
+            ;
+
             //add points back into the main array
-            temp.forEach(function(item){
-               nld.features.push(item);
+            temp.forEach(function (item) {
+                nld.features.push(item);
             });
 
             projection.center([(nld.bbox[0] + nld.bbox[2]) / 2, (nld.bbox[1] + nld.bbox[3]) / 2]);
