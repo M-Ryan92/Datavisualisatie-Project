@@ -237,7 +237,9 @@ drawHelper.lineRules = {
 
 //getPointDistance util function to draw lines which calculates the distance between points
 var beenAt = [];
+var lastbeenAt = [];
 var origin;
+var distance = 0;
 var getPointDistance = function (up, fp) {
     var p = null;
     var rules = drawHelper.lineRules[fp];
@@ -253,11 +255,35 @@ var getPointDistance = function (up, fp) {
             if (up !== r) {
                 if (beenAt.indexOf(r) < 0) {
                     beenAt.push(r);
+                    distance++;
                     p = getPointDistance(up, r);
+                    distance--;
                 }
             } else {
-                p = {d: beenAt.length, from: origin, to: r};
+                p = {d: distance + 1, been: beenAt, from: origin, to: r};
+                lastbeenAt = beenAt;
                 beenAt = [];
+                distance = 0;
+            }
+        } else {
+            if (up !== r) {
+                if (beenAt.indexOf(r) < 0) {
+
+                    if (lastbeenAt[distance - 1] !== undefined && lastbeenAt[distance - 1] !== r) {
+                        distance++;
+                        var t = getPointDistance(up, r);
+                        if (t.d < p.d) {
+                            p = t;
+                        }
+                        distance--;
+                    }
+                }
+            } else {
+                if (p.d > distance) {
+                    p = {d: distance + 1, been: beenAt, from: origin, to: r};
+                    lastbeenAt = beenAt;
+                    beenAt = [];
+                }
             }
         }
     });
@@ -265,5 +291,5 @@ var getPointDistance = function (up, fp) {
 };
 
 var usedpoint = "52";
-var cannotgetto = "99";
+var cannotgetto = "98";
 console.log("rout: ", getPointDistance(usedpoint, cannotgetto));
