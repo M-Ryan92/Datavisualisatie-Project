@@ -12,23 +12,18 @@ drawHelper.drawNetwork = function (np, pointList, col) {
     var secondKeyList = drawHelper.getKeyList(secondElement);
     var previousKey;
     firstKeyList.forEach(function (fk) {
-
         var rules = drawHelper.lineRules[fk];
-        console.log("fk");
-        console.log(fk);
 
         if (previousKey !== undefined) {
-            if (rules.indexOf(previousKey) !== -1) {
+            if (rules !== undefined && rules.indexOf(previousKey) !== -1) {
                 lineArray.push(lineString.makeFeature([pointList[fk][0], pointList[fk][1]], [pointList[previousKey][0], pointList[previousKey][1]], col));
             }
         }
-
         secondKeyList.forEach(function (sk) {
             if (rules !== undefined && rules.indexOf(sk) !== -1) {
                 lineArray.push(lineString.makeFeature([pointList[fk][0], pointList[fk][1]], [pointList[sk][0], pointList[sk][1]], col));
             }
         });
-
         previousKey = fk;
     });
 
@@ -134,7 +129,7 @@ drawHelper.lineRules = {
     "11a": ["10b", "13a", "14a"],
     "11b": ["10b", "14a", "15"],
     "11c": ["10a", "13b", "14c", "21", "36"],
-    "12": ["13b", "14b", "36", "37"],
+    "12": ["13b", "14b", "36", "37a"],
     "13a": ["10b", "11a", "13b", "14b", "38a"],
     "13b": ["11c", "12", "13a", "14b", "36"],
     "14a": ["11a", "11b", "15", "16", "18"],
@@ -161,13 +156,13 @@ drawHelper.lineRules = {
     "32": ["31", "33", "34b", "46", "47"],
     "33": ["29", "32", "42a"],
     "34": ["24", "28", "35", "36", "39", "41", "42b"],
-    "35": ["34", "36", "37", "39"],
-    "36": ["11c", "12", "13b", "14c", "24", "32", "37"],
+    "35": ["34", "36", "37a", "39"],
+    "36": ["11c", "12", "13b", "14c", "24", "32", "37a"],
     "37a": ["12", "35", "36", "38a", "38b", "39"],
     "37b": ["38b", "39", "67", "73"],
     "38a": ["13a", "37a", "38b", "82a"],
     "38b": ["37b", "38a", "80"],
-    "39": ["34", "35", "37", "40", "41", "67"],
+    "39": ["34", "35", "37a", "40", "41", "67"],
     "40": ["39", "41", "66"],
     "41": ["39", "40", "42b"],
     "42a": ["33", "42b", "49", "51", "53"],
@@ -204,7 +199,7 @@ drawHelper.lineRules = {
     "70": ["69", "71", "72"],
     "71": ["70", "72"],
     "72": ["69", "70", "71", "73", "74"],
-    "73": ["37", "38b", "67", "68", "69", "70", "72", "81"],
+    "73": ["37b", "38b", "67", "68", "69", "70", "72", "81"],
     "74": ["72", "75", "76", "81"],
     "75": ["74", "76"],
     "76": ["74", "75", "77"],
