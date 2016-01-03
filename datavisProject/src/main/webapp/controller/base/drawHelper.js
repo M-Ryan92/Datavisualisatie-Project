@@ -1,10 +1,10 @@
 /* global lineString */
 
 var drawHelper = {};
-drawHelper.formatNpList = function(np) {
+drawHelper.formatNpList = function (np) {
     var newNpList = [];
-    np.forEach(function(point){
-        drawHelper.getKeyList(point).forEach(function(key){
+    np.forEach(function (point) {
+        drawHelper.getKeyList(point).forEach(function (key) {
             newNpList.push(key);
         });
     });
@@ -12,114 +12,100 @@ drawHelper.formatNpList = function(np) {
 };
 
 
-    
-drawHelper.drawNetwork = function (np, geoPointList, col) {
-    np = drawHelper.formatNpList(np);
-    var lineArray = [];
-    var points = np;
-    var firstElement = points.shift();
-    var secondElement = points[0];
-
-    var firstKeyList = drawHelper.getKeyList(firstElement);
-    var secondKeyList = drawHelper.getKeyList(secondElement);
-    var previousKey;
-    firstKeyList.forEach(function (fk) {
-        var rules = drawHelper.lineRules[fk];
-
-        if (previousKey !== undefined) {
-            if (rules !== undefined && rules.indexOf(previousKey) !== -1) {
-                lineArray.push(lineString.makeFeature([geoPointList[fk][0], geoPointList[fk][1]], [geoPointList[previousKey][0], geoPointList[previousKey][1]], col));
-            }
-        }
-        secondKeyList.forEach(function (sk) {
-            if (rules !== undefined && rules.indexOf(sk) !== -1) {
-                lineArray.push(lineString.makeFeature([geoPointList[fk][0], geoPointList[fk][1]], [geoPointList[sk][0], geoPointList[sk][1]], col));
-            }
-        });
-        previousKey = fk;
-    });
-
-    //recursive stuff
-    if (points.length !== 0) {
-        drawHelper.drawNetwork(points, geoPointList, col).forEach(function (l) {
-            lineArray.push(l);
-        });
+var max = 2;
+drawHelper.usedpoints;
+drawHelper.isDrawable = function (p1, p2) {
+    console.log(drawHelper.usedpoints.indexOf(p1), "index of p1")
+    if (drawHelper.usedpoints.indexOf(p1) === -1) {
+        drawHelper.usedpoints[p1] = [];
+    }
+    console.log(drawHelper.usedpoints.indexOf(p2), "index of p2")
+    if (drawHelper.usedpoints.indexOf(p2) === -1) {
+        drawHelper.usedpoints[p2] = [];
     }
 
+    if (drawHelper.lineRules[p1].indexOf(p2) !== -1) {
+        console.log("rule allows connection");
+        console.log(drawHelper.usedpoints);
+        if (drawHelper.usedpoints[p1].length >= max) {
+            console.log("max reached for", p1);
+            return false;
+        }
+        if (drawHelper.usedpoints[p2].length >= max) {
+            console.log("max reached for", p2);
+            return false;
+        }
+
+        console.log("max connections not made add one");
+
+        console.log(p1, drawHelper.usedpoints[p1], "push", p2, "new:", drawHelper.usedpoints[p1]);
+        drawHelper.usedpoints[p1].push(p2);
+        console.log(p2, drawHelper.usedpoints[p2], "push", p1, "new:", drawHelper.usedpoints[p2]);
+        drawHelper.usedpoints[p2].push(p1);
+        return true;
+    }
+    return false;
+};
+
+drawHelper.drawNetwork = function (np, geoPointList, col, r) {
+    if(r === undefined || drawHelper.usedpoints === undefined){
+        drawHelper.usedpoints = [];
+    }
+    var lineArray = [];
+    var point = np.shift();
+    var isCreated = false;
+    //recursive check
+    if (np.length !== 0) {
+        np.forEach(function (p) {
+            console.log(point, p);
+            if (drawHelper.isDrawable(point, p)) {
+                isCreated = true;
+                lineArray.push(lineString.makeFeature([geoPointList[point][0], geoPointList[point][1]], [geoPointList[p][0], geoPointList[p][1]], col));
+            }
+        });
+
+
+//        drawHelper.drawNetwork(np, geoPointList, col).forEach(function (lines) {
+//            lineArray.push(lines);
+//        });
+    } else {
+        return [];
+    }
     return lineArray;
 
-//    var points = np;
+
 //    var lineArray = [];
+//    var points = np;
 //    var firstElement = points.shift();
 //    var secondElement = points[0];
 //
-//    var firstKeyList = undefined;
-//    var secondKeyList = undefined;
-//    var la = drawHelper.lineRules[firstElement];
+//    var firstKeyList = drawHelper.getKeyList(firstElement);
+//    var secondKeyList = drawHelper.getKeyList(secondElement);
+//    var previousKey;
+//    firstKeyList.forEach(function (fk) {
+//        var rules = drawHelper.lineRules[fk];
 //
-//    if (!drawHelper.lineRules.hasOwnProperty(firstElement)) {
-//        firstKeyList = drawHelper.getKeyList(firstElement);
-//    }
-//
-//    if (!drawHelper.lineRules.hasOwnProperty(secondElement)) {
-//        secondKeyList = drawHelper.getKeyList(secondElement);
-//    }
-//
-//    if (firstKeyList !== undefined) {
-//        var previousKey;
-//        firstKeyList.forEach(function (fk) {
-//            var rules = drawHelper.lineRules[fk];
-//            if (previousKey !== undefined) {
-//                if (rules.indexOf(previousKey) !== -1) {
-//                    lineArray.push(lineString.makeFeature([drawHelper.geoPointList[fk][0], drawHelper.geoPointList[fk][1]], [drawHelper.geoPointList[previousKey][0], drawHelper.geoPointList[previousKey][1]], col));
-//                }
-//            }
-//            if (secondKeyList !== undefined) {
-//                secondKeyList.forEach(function (sk) {
-//                    if (rules.indexOf(sk) !== -1) {
-//                        lineArray.push(lineString.makeFeature([drawHelper.geoPointList[fk][0], drawHelper.geoPointList[fk][1]], [drawHelper.geoPointList[sk][0], drawHelper.geoPointList[sk][1]], col));
-//                    }
-//                });
-//            }
-//            previousKey = fk;
-//        });
-//    } else {
-//        var rules = drawHelper.lineRules[firstElement];
 //        if (previousKey !== undefined) {
-//            if (rules.indexOf(previousKey) !== -1) {
-//                lineArray.push(lineString.makeFeature([drawHelper.geoPointList[firstElement][0], drawHelper.geoPointList[firstElement][1]], [drawHelper.geoPointList[previousKey][0], drawHelper.geoPointList[previousKey][1]], col));
+//            if (rules !== undefined && rules.indexOf(previousKey) !== -1) {
+//                lineArray.push(lineString.makeFeature([geoPointList[fk][0], geoPointList[fk][1]], [geoPointList[previousKey][0], geoPointList[previousKey][1]], col));
 //            }
 //        }
-//        if (secondKeyList !== undefined) {
-//            console.log("secondKeyList: ");
-//            console.log(secondKeyList);
-//            console.log("end");
-//            console.log("pointlist");
-//            console.log(drawHelper.geoPointList);            
-//            secondKeyList.forEach(function (sk) {
-//                if (rules.indexOf(sk) !== -1) {
-//                console.log("sk");
-//                console.log(sk);
-//                    console.log("point list:"+ firstElement);
-//                    console.log(drawHelper.geoPointList[firstElement]);
-//                    console.log("point list:"+ sk);
-//                    console.log(drawHelper.geoPointList[sk]);
-////                    lineArray.push(lineString.makeFeature([drawHelper.geoPointList[firstElement][0], drawHelper.geoPointList[firstElement][1]], [drawHelper.geoPointList[sk][0], drawHelper.geoPointList[sk][1]], col));
-//                }
-//            });
-//        }
-//        previousKey = firstElement;
-//    }
+//        secondKeyList.forEach(function (sk) {
+//            if (rules !== undefined && rules.indexOf(sk) !== -1) {
+//                lineArray.push(lineString.makeFeature([geoPointList[fk][0], geoPointList[fk][1]], [geoPointList[sk][0], geoPointList[sk][1]], col));
+//            }
+//        });
+//        previousKey = fk;
+//    });
 //
-//
+//    //recursive stuff
 //    if (points.length !== 0) {
-//        drawHelper.drawNetwork(points, col).forEach(function (l) {
+//        drawHelper.drawNetwork(points, geoPointList, col).forEach(function (l) {
 //            lineArray.push(l);
 //        });
 //    }
+//
 //    return lineArray;
-//    console.log(firstElement);
-//    console.log(la);
 };
 
 drawHelper.getKeyList = function (element) {

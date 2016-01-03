@@ -217,35 +217,9 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
 
             for (var companyNetwork in self.networkPoints) {
-                drawHelper.drawNetwork(self.networkPoints[companyNetwork], geoPointList, lineColors[companyNetwork]).forEach(function(l){
+                drawHelper.drawNetwork(drawHelper.formatNpList(self.networkPoints[companyNetwork]), geoPointList, lineColors[companyNetwork]).forEach(function(l){
                     nld.features.push(l);
                 });
-
-//                self.networkPoints[npC].forEach(function (np) {
-//
-//                    if (last !== null && next === null) {
-//                        next = np;
-//
-//                        if (geoPointList.hasOwnProperty(last) === false) {
-//                            last += "a";
-//                        }
-//
-//                        if (geoPointList.hasOwnProperty(next) === false) {
-//                            next += "a";
-//                        }
-//
-//                        if (geoPointList.hasOwnProperty(last) && geoPointList.hasOwnProperty(next)) {
-//                            nld.features.push(lineString.makeFeature([geoPointList[last][0], geoPointList[last][1]], [geoPointList[next][0], geoPointList[next][1]], lineColors[npC]));
-//                        }
-//
-//                        last = next;
-//                        next = null;
-//                    }
-//
-//                    if (last === null) {
-//                        last = np;
-//                    }
-//                });
             }
             ;
 
