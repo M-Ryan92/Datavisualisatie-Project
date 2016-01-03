@@ -1,49 +1,108 @@
 /* global lineString */
 
 var drawHelper = {};
-drawHelper.pointList;
 
-drawHelper.drawNetwork = function (np, col) {
-
+drawHelper.drawNetwork = function (np, pointList, col) {
     var lineArray = [];
-    var firstElement = np.shift();
-    var secondElement = np[0];
+    var points = np;
+    var firstElement = points.shift();
+    var secondElement = points[0];
+    
+    var firstKeyList = drawHelper.getKeyList(firstElement);
+    var secondKeyList = drawHelper.getKeyList(secondElement);    
 
-    var firstKeyList, secondKeyList;
-    console.log(secondElement);
-    var la = drawHelper.lineRules[firstElement];
-
-    if (!drawHelper.lineRules.hasOwnProperty(firstElement)) {
-        firstKeyList = drawHelper.getKeyList(firstElement);
-    }
-
-    if (!drawHelper.lineRules.hasOwnProperty(secondElement)) {
-        secondKeyList = drawHelper.getKeyList(secondElement);
-    }
-
-    if (firstKeyList !== undefined) {
-        var previousKey;
-        firstKeyList.forEach(function (fk) {
-            var rules = drawHelper.lineRules[fk];
-            if (previousKey !== undefined) {
-                if (rules.indexOf(previousKey) !== -1) {
-                    lineArray.push(lineString.makeFeature([drawHelper.pointList[fk][0], drawHelper.pointList[fk][1]], [drawHelper.pointList[previousKey][0], drawHelper.pointList[previousKey][1]], col));
-                }
+    firstKeyList.forEach(function(fk){
+        var rules = drawHelper.lineRules[fk];
+        console.log("fk");
+        console.log(fk);
+        secondKeyList.forEach(function (sk) {
+            if (rules !== undefined && rules.indexOf(sk) !== -1 ) {
+               lineArray.push(lineString.makeFeature([pointList[fk][0], pointList[fk][1]], [pointList[sk][0], pointList[sk][1]], col));
             }
-            if (secondKeyList !== undefined) {
-                secondKeyList.forEach(function (sk) {
-                    if (rules.indexOf(sk) !== -1) {
-                        lineArray.push(lineString.makeFeature([drawHelper.pointList[fk][0], drawHelper.pointList[fk][1]], [drawHelper.pointList[sk][0], drawHelper.pointList[sk][1]], col));
-                    }
-                });
-            }
-            previousKey = fk;
+        });
+    });
+
+    //recursive stuff
+    if (points.length !== 0) {
+        drawHelper.drawNetwork(points, pointList, col).forEach(function (l) {
+            lineArray.push(l);
         });
     }
     
     return lineArray;
-    console.log(firstElement);
-    console.log(la);
+
+//    var points = np;
+//    var lineArray = [];
+//    var firstElement = points.shift();
+//    var secondElement = points[0];
+//
+//    var firstKeyList = undefined;
+//    var secondKeyList = undefined;
+//    var la = drawHelper.lineRules[firstElement];
+//
+//    if (!drawHelper.lineRules.hasOwnProperty(firstElement)) {
+//        firstKeyList = drawHelper.getKeyList(firstElement);
+//    }
+//
+//    if (!drawHelper.lineRules.hasOwnProperty(secondElement)) {
+//        secondKeyList = drawHelper.getKeyList(secondElement);
+//    }
+//
+//    if (firstKeyList !== undefined) {
+//        var previousKey;
+//        firstKeyList.forEach(function (fk) {
+//            var rules = drawHelper.lineRules[fk];
+//            if (previousKey !== undefined) {
+//                if (rules.indexOf(previousKey) !== -1) {
+//                    lineArray.push(lineString.makeFeature([drawHelper.pointList[fk][0], drawHelper.pointList[fk][1]], [drawHelper.pointList[previousKey][0], drawHelper.pointList[previousKey][1]], col));
+//                }
+//            }
+//            if (secondKeyList !== undefined) {
+//                secondKeyList.forEach(function (sk) {
+//                    if (rules.indexOf(sk) !== -1) {
+//                        lineArray.push(lineString.makeFeature([drawHelper.pointList[fk][0], drawHelper.pointList[fk][1]], [drawHelper.pointList[sk][0], drawHelper.pointList[sk][1]], col));
+//                    }
+//                });
+//            }
+//            previousKey = fk;
+//        });
+//    } else {
+//        var rules = drawHelper.lineRules[firstElement];
+//        if (previousKey !== undefined) {
+//            if (rules.indexOf(previousKey) !== -1) {
+//                lineArray.push(lineString.makeFeature([drawHelper.pointList[firstElement][0], drawHelper.pointList[firstElement][1]], [drawHelper.pointList[previousKey][0], drawHelper.pointList[previousKey][1]], col));
+//            }
+//        }
+//        if (secondKeyList !== undefined) {
+//            console.log("secondKeyList: ");
+//            console.log(secondKeyList);
+//            console.log("end");
+//            console.log("pointlist");
+//            console.log(drawHelper.pointList);            
+//            secondKeyList.forEach(function (sk) {
+//                if (rules.indexOf(sk) !== -1) {
+//                console.log("sk");
+//                console.log(sk);
+//                    console.log("point list:"+ firstElement);
+//                    console.log(drawHelper.pointList[firstElement]);
+//                    console.log("point list:"+ sk);
+//                    console.log(drawHelper.pointList[sk]);
+////                    lineArray.push(lineString.makeFeature([drawHelper.pointList[firstElement][0], drawHelper.pointList[firstElement][1]], [drawHelper.pointList[sk][0], drawHelper.pointList[sk][1]], col));
+//                }
+//            });
+//        }
+//        previousKey = firstElement;
+//    }
+//
+//
+//    if (points.length !== 0) {
+//        drawHelper.drawNetwork(points, col).forEach(function (l) {
+//            lineArray.push(l);
+//        });
+//    }
+//    return lineArray;
+//    console.log(firstElement);
+//    console.log(la);
 };
 
 drawHelper.getKeyList = function (element) {
@@ -53,6 +112,9 @@ drawHelper.getKeyList = function (element) {
             kList.push(k);
         }
     });
+    if(kList.length === 0){
+        kList.push(element);
+    }
     return kList;
 };
 
@@ -91,7 +153,8 @@ drawHelper.lineRules = {
     "34": ["24", "28", "35", "36", "39", "41", "42b"],
     "35": ["34", "36", "37", "39"],
     "36": ["11c", "12", "13b", "14c", "24", "32", "37"],
-    "37": ["12", "35", "36", "38a", "38b", "39"],
+    "37a": ["12", "35", "36", "38a", "38b", "39"],
+    "37b": ["38b", "39", "67", "73"],
     "38a": ["13a", "37a", "38b", "82a"],
     "38b": ["37b", "38a", "80"],
     "39": ["34", "35", "37", "40", "41", "67"],
