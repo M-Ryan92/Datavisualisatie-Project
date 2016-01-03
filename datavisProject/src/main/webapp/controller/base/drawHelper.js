@@ -14,29 +14,19 @@ drawHelper.formatNpList = function (np) {
 
 drawHelper.usedpoints;
 drawHelper.isDrawable = function (p1, p2, max) {
-//    console.log(drawHelper.usedpoints[p1] === undefined, "p1 === undefined?");
     if (drawHelper.usedpoints[p1] === undefined) {
         drawHelper.usedpoints[p1] = [];
     }
-//    console.log(drawHelper.usedpoints === undefined, "p2 === undefined?");
     if (drawHelper.usedpoints[p2] === undefined) {
         drawHelper.usedpoints[p2] = [];
     }
 
     if (drawHelper.lineRules[p1].indexOf(p2) !== -1) {
-//        console.log("rule allows connection");
-//        console.log(drawHelper.usedpoints);
         if (drawHelper.usedpoints[p1].length >= max || drawHelper.usedpoints[p2].length >= max) {
-//            console.log("max reached for", p1);
             return false;
         } else {
-//            console.log("max connections not made add one");
-//            console.log(p1, drawHelper.usedpoints[p1], "push", p2);
             drawHelper.usedpoints[p1].push(p2);
-//            console.log("new:", drawHelper.usedpoints[p1]);
-//            console.log(p2, drawHelper.usedpoints[p2], "push", p1, "new:", drawHelper.usedpoints[p2]);
             drawHelper.usedpoints[p2].push(p1);
-//            console.log("new:", drawHelper.usedpoints[p2]);
             return true;
         }
     }
@@ -44,7 +34,7 @@ drawHelper.isDrawable = function (p1, p2, max) {
 };
 
 drawHelper.drawNetwork = function (np, geoPointList, col, r) {
-    if (r !== true || drawHelper.usedpoints === undefined) {
+    if (r === undefined || drawHelper.usedpoints === undefined) {
         console.log("reset");
         drawHelper.usedpoints = [];
     }
@@ -55,71 +45,55 @@ drawHelper.drawNetwork = function (np, geoPointList, col, r) {
     if (np.length !== 0) {
         np.forEach(function (p) {
             if (drawHelper.isDrawable(point, p, 2)) {
-//                console.log("drawable ", point, p);
-//                console.log(drawHelper.usedpoints);
                 isCreated = true;
                 lineArray.push(lineString.makeFeature([geoPointList[point][0], geoPointList[point][1]], [geoPointList[p][0], geoPointList[p][1]], col));
             }
         });
         if (isCreated === false) {
             var p;
-            drawHelper.usedpoints.forEach(function (v, k) {
-                //console.log(k, point);
-
-                p = getPointDistance(point, k);
-                console.log(p.from, p.to);
-                if (drawHelper.isDrawable(point, p, 3)) {
-                    console.log("draw me nigguh");
+            console.log(drawHelper.usedpoints);
+            Object.keys(drawHelper.usedpoints).forEach(function (k) {
+                if (isCreated === false) {
+                    console.log(point, k);
+                    p = getPointDistance(point, k);
+                    //console.log(p.from, p.to);
+//                if (drawHelper.isDrawable(p.from, p.to, 3) && isCreated === false) {
+//                    console.log("draw me nigguh");
                     lineArray.push(lineString.makeFeature([geoPointList[p.from][0], geoPointList[p.from][1]], [geoPointList[p.to][0], geoPointList[p.to][1]], col));
                     isCreated = true;
-                    return;
+//                }
+                    distance = 0;
                 }
-                distance = 0;
             });
 
         }
 
-        drawHelper.drawNetwork(np, geoPointList, col, true).forEach(function (lines) {
+        drawHelper.drawNetwork(np, geoPointList, col, false).forEach(function (lines) {
             lineArray.push(lines);
         });
     } else {
-        return [];
+        if (isCreated === false) {
+            var p = undefined;
+            console.log(drawHelper.usedpoints);
+            Object.keys(drawHelper.usedpoints).forEach(function (k) {
+                console.log(point, k);
+                t = getPointDistance(point, k);
+
+                if (p === undefined || p.d > t.d) {
+                    p = t;
+                }
+                beenAt = [];
+                lastbeenAt = [];
+                distance = 0;
+            });
+            if (isCreated === false) {
+                lineArray.push(lineString.makeFeature([geoPointList[p.from][0], geoPointList[p.from][1]], [geoPointList[p.to][0], geoPointList[p.to][1]], col));
+                isCreated = true;
+
+            }
+        }
     }
     return lineArray;
-
-
-//    var lineArray = [];
-//    var points = np;
-//    var firstElement = points.shift();
-//    var secondElement = points[0];
-//
-//    var firstKeyList = drawHelper.getKeyList(firstElement);
-//    var secondKeyList = drawHelper.getKeyList(secondElement);
-//    var previousKey;
-//    firstKeyList.forEach(function (fk) {
-//        var rules = drawHelper.lineRules[fk];
-//
-//        if (previousKey !== undefined) {
-//            if (rules !== undefined && rules.indexOf(previousKey) !== -1) {
-//                lineArray.push(lineString.makeFeature([geoPointList[fk][0], geoPointList[fk][1]], [geoPointList[previousKey][0], geoPointList[previousKey][1]], col));
-//            }
-//        }
-//        secondKeyList.forEach(function (sk) {
-//            if (rules !== undefined && rules.indexOf(sk) !== -1) {
-//                lineArray.push(lineString.makeFeature([geoPointList[fk][0], geoPointList[fk][1]], [geoPointList[sk][0], geoPointList[sk][1]], col));
-//            }
-//        });
-//        previousKey = fk;
-//    });
-//
-//    //recursive stuff
-//    if (points.length !== 0) {
-//        drawHelper.drawNetwork(points, geoPointList, col).forEach(function (l) {
-//            lineArray.push(l);
-//        });
-//    }
-//
-//    return lineArray;
 };
 
 drawHelper.getKeyList = function (element) {
@@ -302,6 +276,6 @@ var getPointDistance = function (up, fp) {
     return p;
 };
 
-var usedpoint = "52";
-var cannotgetto = "98";
-console.log("rout: ", getPointDistance(usedpoint, cannotgetto));
+//var usedpoint = "52";
+//var cannotgetto = "98";
+//console.log("rout: ", getPointDistance(usedpoint, cannotgetto));

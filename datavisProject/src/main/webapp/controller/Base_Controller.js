@@ -220,8 +220,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                 drawHelper.drawNetwork(drawHelper.formatNpList(self.networkPoints[companyNetwork]), geoPointList, lineColors[companyNetwork]).forEach(function(l){
                     nld.features.push(l);
                 });
-            }
-            ;
+            };
 
             //add points back into the main array
             temp.forEach(function (item) {
