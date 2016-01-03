@@ -174,7 +174,7 @@ drawHelper.lineRules = {
     "46": ["32", "43b", "44", "47"],
     "47": ["32", "46", "48"],
     "48": ["47", "49", "51"],
-    "49": ["48", "42", "51", "33"],
+    "49": ["48", "42a", "51", "33"],
     "50": ["51", "52", "55", "56"],
     "51": ["42a", "48", "49", "50"],
     "52": ["50", "53", "54", "56"],
@@ -233,34 +233,37 @@ drawHelper.lineRules = {
     "99": ["97", "98"]
 
 };
-console.log("lineRules");
-console.log(drawHelper.lineRules);
-console.log("end of lineRules");
 
-var rwycf = [];
-var getClosestPoint = function (up, fp) {
-    var p;
-    if (rwycf.length === 0) {
-        rwycf.push(fp);
-    }
+
+//getPointDistance util function to draw lines which calculates the distance between points
+var beenAt = [];
+var origin;
+var getPointDistance = function (up, fp) {
+    var p = null;
     var rules = drawHelper.lineRules[fp];
+    if (origin === undefined) {
+        origin = fp;
+    }
+    if (beenAt.length === 0) {
+        beenAt.push(fp);
+    }
+
     rules.forEach(function (r) {
-        if (p === undefined) {
-            if (up.indexOf(r) === -1) {
-                console.log(rwycf);
-                if (rwycf.indexOf(r) === -1) {
-                    rwycf.push(r);
-                    p = test(up, r);
+        if (p === null) {
+            if (up !== r) {
+                if (beenAt.indexOf(r) < 0) {
+                    beenAt.push(r);
+                    p = getPointDistance(up, r);
                 }
             } else {
-                p = r;
-                rwycf = [];
+                p = {d: beenAt.length, from: origin, to: r};
+                beenAt = [];
             }
         }
     });
     return p;
 };
 
-var usedpoints = ["10a", "11c","13b"];
-var cannotgetto = "53";
-console.log("rout: ", getClosestPoint(usedpoints, cannotgetto));
+var usedpoint = "52";
+var cannotgetto = "99";
+console.log("rout: ", getPointDistance(usedpoint, cannotgetto));
