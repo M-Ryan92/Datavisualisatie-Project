@@ -193,10 +193,10 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
         var g = svg.append("g");
 
         d3.json("map.json", function (error, nld) {
-            var pointList = {};
+            var geoPointList = {};
             nld.features.forEach(function (feature) {
                 if (feature.geometry.type === "Point") {
-                    pointList[feature.properties.point] = feature.geometry.coordinates;
+                    geoPointList[feature.properties.point] = feature.geometry.coordinates;
                 }
 
                 if (feature.geometry.type === "Polygon") {
@@ -217,7 +217,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
 
             for (var companyNetwork in self.networkPoints) {
-                drawHelper.drawNetwork(self.networkPoints[companyNetwork], pointList, lineColors[companyNetwork]).forEach(function(l){
+                drawHelper.drawNetwork(self.networkPoints[companyNetwork], geoPointList, lineColors[companyNetwork]).forEach(function(l){
                     nld.features.push(l);
                 });
 
@@ -226,16 +226,16 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 //                    if (last !== null && next === null) {
 //                        next = np;
 //
-//                        if (pointList.hasOwnProperty(last) === false) {
+//                        if (geoPointList.hasOwnProperty(last) === false) {
 //                            last += "a";
 //                        }
 //
-//                        if (pointList.hasOwnProperty(next) === false) {
+//                        if (geoPointList.hasOwnProperty(next) === false) {
 //                            next += "a";
 //                        }
 //
-//                        if (pointList.hasOwnProperty(last) && pointList.hasOwnProperty(next)) {
-//                            nld.features.push(lineString.makeFeature([pointList[last][0], pointList[last][1]], [pointList[next][0], pointList[next][1]], lineColors[npC]));
+//                        if (geoPointList.hasOwnProperty(last) && geoPointList.hasOwnProperty(next)) {
+//                            nld.features.push(lineString.makeFeature([geoPointList[last][0], geoPointList[last][1]], [geoPointList[next][0], geoPointList[next][1]], lineColors[npC]));
 //                        }
 //
 //                        last = next;

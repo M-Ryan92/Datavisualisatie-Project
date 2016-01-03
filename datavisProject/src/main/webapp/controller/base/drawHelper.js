@@ -11,7 +11,9 @@ drawHelper.formatNpList = function(np) {
     return newNpList;
 };
 
-drawHelper.drawNetwork = function (np, pointList, col) {
+
+    
+drawHelper.drawNetwork = function (np, geoPointList, col) {
     np = drawHelper.formatNpList(np);
     var lineArray = [];
     var points = np;
@@ -26,12 +28,12 @@ drawHelper.drawNetwork = function (np, pointList, col) {
 
         if (previousKey !== undefined) {
             if (rules !== undefined && rules.indexOf(previousKey) !== -1) {
-                lineArray.push(lineString.makeFeature([pointList[fk][0], pointList[fk][1]], [pointList[previousKey][0], pointList[previousKey][1]], col));
+                lineArray.push(lineString.makeFeature([geoPointList[fk][0], geoPointList[fk][1]], [geoPointList[previousKey][0], geoPointList[previousKey][1]], col));
             }
         }
         secondKeyList.forEach(function (sk) {
             if (rules !== undefined && rules.indexOf(sk) !== -1) {
-                lineArray.push(lineString.makeFeature([pointList[fk][0], pointList[fk][1]], [pointList[sk][0], pointList[sk][1]], col));
+                lineArray.push(lineString.makeFeature([geoPointList[fk][0], geoPointList[fk][1]], [geoPointList[sk][0], geoPointList[sk][1]], col));
             }
         });
         previousKey = fk;
@@ -39,7 +41,7 @@ drawHelper.drawNetwork = function (np, pointList, col) {
 
     //recursive stuff
     if (points.length !== 0) {
-        drawHelper.drawNetwork(points, pointList, col).forEach(function (l) {
+        drawHelper.drawNetwork(points, geoPointList, col).forEach(function (l) {
             lineArray.push(l);
         });
     }
@@ -69,13 +71,13 @@ drawHelper.drawNetwork = function (np, pointList, col) {
 //            var rules = drawHelper.lineRules[fk];
 //            if (previousKey !== undefined) {
 //                if (rules.indexOf(previousKey) !== -1) {
-//                    lineArray.push(lineString.makeFeature([drawHelper.pointList[fk][0], drawHelper.pointList[fk][1]], [drawHelper.pointList[previousKey][0], drawHelper.pointList[previousKey][1]], col));
+//                    lineArray.push(lineString.makeFeature([drawHelper.geoPointList[fk][0], drawHelper.geoPointList[fk][1]], [drawHelper.geoPointList[previousKey][0], drawHelper.geoPointList[previousKey][1]], col));
 //                }
 //            }
 //            if (secondKeyList !== undefined) {
 //                secondKeyList.forEach(function (sk) {
 //                    if (rules.indexOf(sk) !== -1) {
-//                        lineArray.push(lineString.makeFeature([drawHelper.pointList[fk][0], drawHelper.pointList[fk][1]], [drawHelper.pointList[sk][0], drawHelper.pointList[sk][1]], col));
+//                        lineArray.push(lineString.makeFeature([drawHelper.geoPointList[fk][0], drawHelper.geoPointList[fk][1]], [drawHelper.geoPointList[sk][0], drawHelper.geoPointList[sk][1]], col));
 //                    }
 //                });
 //            }
@@ -85,7 +87,7 @@ drawHelper.drawNetwork = function (np, pointList, col) {
 //        var rules = drawHelper.lineRules[firstElement];
 //        if (previousKey !== undefined) {
 //            if (rules.indexOf(previousKey) !== -1) {
-//                lineArray.push(lineString.makeFeature([drawHelper.pointList[firstElement][0], drawHelper.pointList[firstElement][1]], [drawHelper.pointList[previousKey][0], drawHelper.pointList[previousKey][1]], col));
+//                lineArray.push(lineString.makeFeature([drawHelper.geoPointList[firstElement][0], drawHelper.geoPointList[firstElement][1]], [drawHelper.geoPointList[previousKey][0], drawHelper.geoPointList[previousKey][1]], col));
 //            }
 //        }
 //        if (secondKeyList !== undefined) {
@@ -93,16 +95,16 @@ drawHelper.drawNetwork = function (np, pointList, col) {
 //            console.log(secondKeyList);
 //            console.log("end");
 //            console.log("pointlist");
-//            console.log(drawHelper.pointList);            
+//            console.log(drawHelper.geoPointList);            
 //            secondKeyList.forEach(function (sk) {
 //                if (rules.indexOf(sk) !== -1) {
 //                console.log("sk");
 //                console.log(sk);
 //                    console.log("point list:"+ firstElement);
-//                    console.log(drawHelper.pointList[firstElement]);
+//                    console.log(drawHelper.geoPointList[firstElement]);
 //                    console.log("point list:"+ sk);
-//                    console.log(drawHelper.pointList[sk]);
-////                    lineArray.push(lineString.makeFeature([drawHelper.pointList[firstElement][0], drawHelper.pointList[firstElement][1]], [drawHelper.pointList[sk][0], drawHelper.pointList[sk][1]], col));
+//                    console.log(drawHelper.geoPointList[sk]);
+////                    lineArray.push(lineString.makeFeature([drawHelper.geoPointList[firstElement][0], drawHelper.geoPointList[firstElement][1]], [drawHelper.geoPointList[sk][0], drawHelper.geoPointList[sk][1]], col));
 //                }
 //            });
 //        }
