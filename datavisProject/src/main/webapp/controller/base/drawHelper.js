@@ -153,7 +153,7 @@ drawHelper.lineRules = {
     "29": ["28", "30", "33"],
     "30": ["26", "29", "31"],
     "31": ["26", "30", "32"],
-    "32": ["31", "33", "34b", "46", "47"],
+    "32": ["31", "33", "34", "46", "47"],
     "33": ["29", "32", "42a"],
     "34": ["24", "28", "35", "36", "39", "41", "42b"],
     "35": ["34", "36", "37a", "39"],
@@ -236,3 +236,31 @@ drawHelper.lineRules = {
 console.log("lineRules");
 console.log(drawHelper.lineRules);
 console.log("end of lineRules");
+
+var rwycf = [];
+var getClosestPoint = function (up, fp) {
+    var p;
+    if (rwycf.length === 0) {
+        rwycf.push(fp);
+    }
+    var rules = drawHelper.lineRules[fp];
+    rules.forEach(function (r) {
+        if (p === undefined) {
+            if (up.indexOf(r) === -1) {
+                console.log(rwycf);
+                if (rwycf.indexOf(r) === -1) {
+                    rwycf.push(r);
+                    p = test(up, r);
+                }
+            } else {
+                p = r;
+                rwycf = [];
+            }
+        }
+    });
+    return p;
+};
+
+var usedpoints = ["10a", "11c","13b"];
+var cannotgetto = "53";
+console.log("rout: ", getClosestPoint(usedpoints, cannotgetto));
