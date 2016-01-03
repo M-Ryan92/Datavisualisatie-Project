@@ -12,32 +12,31 @@ drawHelper.formatNpList = function (np) {
 };
 
 
-var max = 2;
 drawHelper.usedpoints;
-drawHelper.isDrawable = function (p1, p2) {
-    console.log(drawHelper.usedpoints[p1] === undefined, "p1 === undefined?");
+drawHelper.isDrawable = function (p1, p2, max) {
+//    console.log(drawHelper.usedpoints[p1] === undefined, "p1 === undefined?");
     if (drawHelper.usedpoints[p1] === undefined) {
         drawHelper.usedpoints[p1] = [];
     }
-    console.log(drawHelper.usedpoints === undefined, "p2 === undefined?");
+//    console.log(drawHelper.usedpoints === undefined, "p2 === undefined?");
     if (drawHelper.usedpoints[p2] === undefined) {
         drawHelper.usedpoints[p2] = [];
     }
 
     if (drawHelper.lineRules[p1].indexOf(p2) !== -1) {
-        console.log("rule allows connection");
-        console.log(drawHelper.usedpoints);
+//        console.log("rule allows connection");
+//        console.log(drawHelper.usedpoints);
         if (drawHelper.usedpoints[p1].length >= max || drawHelper.usedpoints[p2].length >= max) {
-            console.log("max reached for", p1);
+//            console.log("max reached for", p1);
             return false;
         } else {
-            console.log("max connections not made add one");
-            console.log(p1, drawHelper.usedpoints[p1], "push", p2);
+//            console.log("max connections not made add one");
+//            console.log(p1, drawHelper.usedpoints[p1], "push", p2);
             drawHelper.usedpoints[p1].push(p2);
-            console.log("new:", drawHelper.usedpoints[p1]);
-            console.log(p2, drawHelper.usedpoints[p2], "push", p1, "new:", drawHelper.usedpoints[p2]);
+//            console.log("new:", drawHelper.usedpoints[p1]);
+//            console.log(p2, drawHelper.usedpoints[p2], "push", p1, "new:", drawHelper.usedpoints[p2]);
             drawHelper.usedpoints[p2].push(p1);
-            console.log("new:", drawHelper.usedpoints[p2]);
+//            console.log("new:", drawHelper.usedpoints[p2]);
             return true;
         }
     }
@@ -55,15 +54,29 @@ drawHelper.drawNetwork = function (np, geoPointList, col, r) {
     //recursive check
     if (np.length !== 0) {
         np.forEach(function (p) {
-            if (drawHelper.isDrawable(point, p)) {
-                console.log("drawable ", point, p);
-                console.log(drawHelper.usedpoints);
+            if (drawHelper.isDrawable(point, p, 2)) {
+//                console.log("drawable ", point, p);
+//                console.log(drawHelper.usedpoints);
                 isCreated = true;
                 lineArray.push(lineString.makeFeature([geoPointList[point][0], geoPointList[point][1]], [geoPointList[p][0], geoPointList[p][1]], col));
             }
         });
-        if(isCreated === false){
-            
+        if (isCreated === false) {
+            var p;
+            drawHelper.usedpoints.forEach(function (v, k) {
+                //console.log(k, point);
+
+                p = getPointDistance(point, k);
+                console.log(p.from, p.to);
+                if (drawHelper.isDrawable(point, p, 3)) {
+                    console.log("draw me nigguh");
+                    lineArray.push(lineString.makeFeature([geoPointList[p.from][0], geoPointList[p.from][1]], [geoPointList[p.to][0], geoPointList[p.to][1]], col));
+                    isCreated = true;
+                    return;
+                }
+                distance = 0;
+            });
+
         }
 
         drawHelper.drawNetwork(np, geoPointList, col, true).forEach(function (lines) {
