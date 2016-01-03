@@ -10,16 +10,26 @@ drawHelper.drawNetwork = function (np, pointList, col) {
 
     var firstKeyList = drawHelper.getKeyList(firstElement);
     var secondKeyList = drawHelper.getKeyList(secondElement);
-
+    var previousKey;
     firstKeyList.forEach(function (fk) {
+
         var rules = drawHelper.lineRules[fk];
         console.log("fk");
         console.log(fk);
+
+        if (previousKey !== undefined) {
+            if (rules.indexOf(previousKey) !== -1) {
+                lineArray.push(lineString.makeFeature([pointList[fk][0], pointList[fk][1]], [pointList[previousKey][0], pointList[previousKey][1]], col));
+            }
+        }
+
         secondKeyList.forEach(function (sk) {
             if (rules !== undefined && rules.indexOf(sk) !== -1) {
                 lineArray.push(lineString.makeFeature([pointList[fk][0], pointList[fk][1]], [pointList[sk][0], pointList[sk][1]], col));
             }
         });
+
+        previousKey = fk;
     });
 
     //recursive stuff
