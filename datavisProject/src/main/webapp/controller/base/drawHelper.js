@@ -1,8 +1,18 @@
 /* global lineString */
 
 var drawHelper = {};
+drawHelper.formatNpList = function(np) {
+    var newNpList = [];
+    np.forEach(function(point){
+        drawHelper.getKeyList(point).forEach(function(key){
+            newNpList.push(key);
+        });
+    });
+    return newNpList;
+};
 
 drawHelper.drawNetwork = function (np, pointList, col) {
+    np = drawHelper.formatNpList(np);
     var lineArray = [];
     var points = np;
     var firstElement = points.shift();
