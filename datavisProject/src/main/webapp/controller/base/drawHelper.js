@@ -57,27 +57,32 @@ drawHelper.drawNetwork = function (np, geoPointList, col) {
         });
     });
     console.log(groups);
-    drawHelper.getGroupConnections(groups.slice(0));
-//    drawHelper.bindGroups(groups.slice(0), geoPointList, col).forEach(function (line) {
-//        lineArray.push(line);
-//    });
-
+    drawHelper.getGroupConnections(groups.slice(0), col).forEach(function (line) {
+        lineArray.push(line);
+    });
 
     return lineArray;
 };
 
-drawHelper.getGroupConnections = function (groups) {
+drawHelper.getGroupConnections = function (groups, col) {
+    var lines = [];
     var group = groups.shift();
-    var res = {};
+    var res;
 
     groups.forEach(function (g) {
-
+        var t = drawHelper.getClosestPoint(group, g);
+        if(res === undefined || res.distance > t.distance){
+            res = t;
+        }
     });
-
+    lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col));
     if (groups.length > 1) {
-        drawHelper.getGroupConnections(groups);
+        drawHelper.getGroupConnections(groups, col).forEach(function(l){
+            lines.push(l);
+        });
     }
-}
+    return lines;
+};
 
 drawHelper.bindGroups = function (groups, geoPointList, col) {
     var lines = [];
