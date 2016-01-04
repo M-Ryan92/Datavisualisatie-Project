@@ -1,6 +1,7 @@
 /* global lineString */
 
 var drawHelper = {};
+
 drawHelper.formatNpList = function (np) {
     var newNpList = [];
     np.forEach(function (point) {
@@ -10,7 +11,6 @@ drawHelper.formatNpList = function (np) {
     });
     return newNpList;
 };
-
 
 drawHelper.usedpoints;
 drawHelper.isDrawable = function (p1, p2, max) {
@@ -33,67 +33,116 @@ drawHelper.isDrawable = function (p1, p2, max) {
     return false;
 };
 
-drawHelper.drawNetwork = function (np, geoPointList, col, r) {
-    if (r === undefined || drawHelper.usedpoints === undefined) {
-        console.log("reset");
-        drawHelper.usedpoints = [];
-    }
+
+
+drawHelper.drawNetwork = function (np, geoPointList, col) {
+    // lineArray.push(lineString.makeFeature([geoPointList[point][0], geoPointList[point][1]], [geoPointList[p][0], geoPointList[p][1]], col));
     var lineArray = [];
-    var point = np.shift();
-    var isCreated = false;
-    //recursive check
-    if (np.length !== 0) {
-        np.forEach(function (p) {
-            if (drawHelper.isDrawable(point, p, 2)) {
-                isCreated = true;
-                lineArray.push(lineString.makeFeature([geoPointList[point][0], geoPointList[point][1]], [geoPointList[p][0], geoPointList[p][1]], col));
-            }
+    var groups = drawHelper.createGroup(np).reverse();
+    groups.forEach(function (g) {
+        drawHelper.bindGroup(g.slice(0), geoPointList, col).forEach(function (line) {
+            lineArray.push(line);
         });
-        if (isCreated === false) {
-            var p;
-            console.log(drawHelper.usedpoints);
-            Object.keys(drawHelper.usedpoints).forEach(function (k) {
-                if (isCreated === false) {
-                    console.log(point, k);
-                    p = getPointDistance(point, k);
-                    //console.log(p.from, p.to);
-//                if (drawHelper.isDrawable(p.from, p.to, 3) && isCreated === false) {
-//                    console.log("draw me nigguh");
-                    lineArray.push(lineString.makeFeature([geoPointList[p.from][0], geoPointList[p.from][1]], [geoPointList[p.to][0], geoPointList[p.to][1]], col));
-                    isCreated = true;
-//                }
-                    distance = 0;
-                }
-            });
+    });
+    console.log(groups);
+    drawHelper.getGroupConnections(groups.slice(0), geoPointList);
+//    drawHelper.bindGroups(groups.slice(0), geoPointList, col).forEach(function (line) {
+//        lineArray.push(line);
+//    });
 
-        }
 
-        drawHelper.drawNetwork(np, geoPointList, col, false).forEach(function (lines) {
-            lineArray.push(lines);
-        });
-    } else {
-        if (isCreated === false) {
-            var p = undefined;
-            console.log(drawHelper.usedpoints);
-            Object.keys(drawHelper.usedpoints).forEach(function (k) {
-                console.log(point, k);
-                t = getPointDistance(point, k);
-
-                if (p === undefined || p.d > t.d) {
-                    p = t;
-                }
-                beenAt = [];
-                lastbeenAt = [];
-                distance = 0;
-            });
-            if (isCreated === false) {
-                lineArray.push(lineString.makeFeature([geoPointList[p.from][0], geoPointList[p.from][1]], [geoPointList[p.to][0], geoPointList[p.to][1]], col));
-                isCreated = true;
-
-            }
-        }
-    }
     return lineArray;
+};
+
+drawHelper.getGroupConnections = function(groups, geoPointList){
+    var group = groups.shift();
+    var res ={} ;
+    
+    groups.forEach(function (g) {
+        
+    });
+    
+    if(groups.length > 1){
+        drawHelper.getGroupConnections(groups, geoPointList);
+    }
+}
+
+drawHelper.bindGroups = function (groups, geoPointList, col) {
+    var lines = [];
+    var group = groups.shift();
+    var grouppoints = [];
+    group.forEach(function (p) {
+        grouppoints.push(geoPointList[p]);
+    });
+
+
+    if (grouppoints.length !== 0) {
+        var res;
+        groups.forEach(function (g) {
+            var grouppoints2 = [];
+            g.forEach(function (p) {
+                grouppoints2.push(geoPointList[p]);
+            });
+
+            if (grouppoints2.length !== 0) {
+                console.log("grouppoints2.length", grouppoints2, "grouppoints", grouppoints);
+                var t = drawHelper.getClosestPoint(grouppoints, grouppoints2);
+                if (res === undefined || t.distance < res.distance) {
+                    res = t;
+                }
+                console.log("res,", res);
+            }
+        });
+        lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col));
+
+    }
+    if (groups.length > 1) {
+        drawHelper.bindGroups(groups, geoPointList, col);
+    };
+    return lines;
+};
+
+drawHelper.bindGroup = function (group, geoPointList, col) {
+    var lines = [];
+    var point = group.shift();
+    var grouppoints = [];
+    group.forEach(function (p) {
+        grouppoints.push(geoPointList[p]);
+    });
+
+    if (grouppoints.length !== 0) {
+        var res = drawHelper.getClosestPoint([geoPointList[point]], grouppoints);
+        lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col));
+    }
+
+    if (group.length > 1) {
+        drawHelper.bindGroup(group, geoPointList, col).forEach(function (line) {
+            lines.push(line);
+        });
+    }
+    return lines;
+};
+
+drawHelper.createGroup = function (np) {
+    var groups = [];
+    var group = [];
+    var point = np.shift();
+    group.push(point);
+    var pointRule = drawHelper.lineRules[point];
+    pointRule.forEach(function (rule) {
+        if (np.indexOf(rule) > -1 && group.indexOf(rule) === -1) {
+            group.push(rule);
+            np.splice(np.indexOf(rule), 1);
+        }
+    });
+
+    if (np.length > 0) {
+        drawHelper.createGroup(np).forEach(function (grp) {
+            groups.push(grp);
+        });
+    }
+    groups.push(group);
+    return groups;
 };
 
 drawHelper.getKeyList = function (element) {
@@ -107,6 +156,27 @@ drawHelper.getKeyList = function (element) {
         kList.push(element);
     }
     return kList;
+};
+
+drawHelper.getDistance = function (p1, p2) {
+    return Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
+};
+
+drawHelper.getClosestPoint = function (list1, list2) {
+
+    var smallest = {};
+
+    list1.forEach(function (p1) {
+        list2.forEach(function (p2) {
+            var distance = drawHelper.getDistance(p1, p2);
+            if (smallest.distance === undefined || distance < smallest.distance) {
+                smallest.distance = distance;
+                smallest.from = p1;
+                smallest.to = p2;
+            }
+        });
+    });
+    return smallest;
 };
 
 drawHelper.lineRules = {
@@ -208,7 +278,7 @@ drawHelper.lineRules = {
     "90": ["88a", "89", "91a"],
     "91a": ["90", "91b", "92", "99"],
     "91b": ["88c", "91a", "91c"],
-    "91c": ["91b"],
+    "91c": ["91a"],
     "92": ["84", "89", "91a", "98"],
     "93": ["94", "97", "98"],
     "94": ["78", "79", "84", "93", "95", "96", "97"],
@@ -217,65 +287,4 @@ drawHelper.lineRules = {
     "97": ["93", "94", "96", "98", "99"],
     "98": ["92", "93", "97", "99"],
     "99": ["97", "98"]
-
 };
-
-
-//getPointDistance util function to draw lines which calculates the distance between points
-var beenAt = [];
-var lastbeenAt = [];
-var origin;
-var distance = 0;
-var getPointDistance = function (up, fp) {
-    var p = null;
-    var rules = drawHelper.lineRules[fp];
-    if (origin === undefined) {
-        origin = fp;
-    }
-    if (beenAt.length === 0) {
-        beenAt.push(fp);
-    }
-
-    rules.forEach(function (r) {
-        if (p === null) {
-            if (up !== r) {
-                if (beenAt.indexOf(r) < 0) {
-                    beenAt.push(r);
-                    distance++;
-                    p = getPointDistance(up, r);
-                    distance--;
-                }
-            } else {
-                p = {d: distance + 1, been: beenAt, from: origin, to: r};
-                lastbeenAt = beenAt;
-                beenAt = [];
-                distance = 0;
-            }
-        } else {
-            if (up !== r) {
-                if (beenAt.indexOf(r) < 0) {
-
-                    if (lastbeenAt[distance - 1] !== undefined && lastbeenAt[distance - 1] !== r) {
-                        distance++;
-                        var t = getPointDistance(up, r);
-                        if (t.d < p.d) {
-                            p = t;
-                        }
-                        distance--;
-                    }
-                }
-            } else {
-                if (p.d > distance) {
-                    p = {d: distance + 1, been: beenAt, from: origin, to: r};
-                    lastbeenAt = beenAt;
-                    beenAt = [];
-                }
-            }
-        }
-    });
-    return p;
-};
-
-//var usedpoint = "52";
-//var cannotgetto = "98";
-//console.log("rout: ", getPointDistance(usedpoint, cannotgetto));
