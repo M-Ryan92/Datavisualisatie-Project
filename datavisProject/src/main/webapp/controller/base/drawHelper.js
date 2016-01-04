@@ -39,13 +39,25 @@ drawHelper.drawNetwork = function (np, geoPointList, col) {
     // lineArray.push(lineString.makeFeature([geoPointList[point][0], geoPointList[point][1]], [geoPointList[p][0], geoPointList[p][1]], col));
     var lineArray = [];
     var groups = drawHelper.createGroup(np).reverse();
+
+    var temp = [];
+    var grouppoints = [];
     groups.forEach(function (g) {
-        drawHelper.bindGroup(g.slice(0), geoPointList, col).forEach(function (line) {
+        g.forEach(function (p) {
+            grouppoints.push(geoPointList[p]);
+        });
+        temp.push(grouppoints);
+        grouppoints = [];
+    });
+    groups = temp;
+    
+    groups.forEach(function (g) {
+        drawHelper.bindGroup(g.slice(0), col).forEach(function (line) {
             lineArray.push(line);
         });
     });
     console.log(groups);
-    drawHelper.getGroupConnections(groups.slice(0), geoPointList);
+    drawHelper.getGroupConnections(groups.slice(0));
 //    drawHelper.bindGroups(groups.slice(0), geoPointList, col).forEach(function (line) {
 //        lineArray.push(line);
 //    });
@@ -54,16 +66,16 @@ drawHelper.drawNetwork = function (np, geoPointList, col) {
     return lineArray;
 };
 
-drawHelper.getGroupConnections = function(groups, geoPointList){
+drawHelper.getGroupConnections = function (groups) {
     var group = groups.shift();
-    var res ={} ;
-    
+    var res = {};
+
     groups.forEach(function (g) {
-        
+
     });
-    
-    if(groups.length > 1){
-        drawHelper.getGroupConnections(groups, geoPointList);
+
+    if (groups.length > 1) {
+        drawHelper.getGroupConnections(groups);
     }
 }
 
@@ -98,25 +110,22 @@ drawHelper.bindGroups = function (groups, geoPointList, col) {
     }
     if (groups.length > 1) {
         drawHelper.bindGroups(groups, geoPointList, col);
-    };
+    }
+    ;
     return lines;
 };
 
-drawHelper.bindGroup = function (group, geoPointList, col) {
+drawHelper.bindGroup = function (group, col) {
     var lines = [];
     var point = group.shift();
-    var grouppoints = [];
-    group.forEach(function (p) {
-        grouppoints.push(geoPointList[p]);
-    });
 
-    if (grouppoints.length !== 0) {
-        var res = drawHelper.getClosestPoint([geoPointList[point]], grouppoints);
+    if (group.length !== 0) {
+        var res = drawHelper.getClosestPoint([point], group);
         lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col));
     }
 
     if (group.length > 1) {
-        drawHelper.bindGroup(group, geoPointList, col).forEach(function (line) {
+        drawHelper.bindGroup(group, col).forEach(function (line) {
             lines.push(line);
         });
     }
