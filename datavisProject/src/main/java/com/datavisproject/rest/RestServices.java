@@ -66,7 +66,7 @@ public class RestServices {
     public String getGasUsage(@PathParam("year") String year) throws SQLException, JSONException, IOException {
 
         Map<String, Long> usages = Statistic.getGasUsage(year);
-        Map<String, List> gasNetworkPoints = Statistic.getGasNetworkPoints(year, "0");                
+        Map<String, List> gasNetworkPoints = Statistic.getGasNetworkPoints(year, "0");
         return JsonHelper.createJsonObject(
                 new HashMap<String, String>() {
             {

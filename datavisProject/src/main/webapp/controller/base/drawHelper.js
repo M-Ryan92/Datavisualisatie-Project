@@ -12,32 +12,12 @@ drawHelper.formatNpList = function (np) {
     return newNpList;
 };
 
-drawHelper.usedpoints;
-drawHelper.isDrawable = function (p1, p2, max) {
-    if (drawHelper.usedpoints[p1] === undefined) {
-        drawHelper.usedpoints[p1] = [];
-    }
-    if (drawHelper.usedpoints[p2] === undefined) {
-        drawHelper.usedpoints[p2] = [];
-    }
-
-    if (drawHelper.lineRules[p1].indexOf(p2) !== -1) {
-        if (drawHelper.usedpoints[p1].length >= max || drawHelper.usedpoints[p2].length >= max) {
-            return false;
-        } else {
-            drawHelper.usedpoints[p1].push(p2);
-            drawHelper.usedpoints[p2].push(p1);
-            return true;
-        }
-    }
-    return false;
-};
-
-
-
-drawHelper.drawNetwork = function (np, geoPointList, col) {
-    // lineArray.push(lineString.makeFeature([geoPointList[point][0], geoPointList[point][1]], [geoPointList[p][0], geoPointList[p][1]], col));
+drawHelper.drawNetwork = function (np, geoPointList, col) {    
     var lineArray = [];
+    if(np.length <= 0){
+        return lineArray;
+    }
+    
     var groups = drawHelper.createGroup(np).reverse();
 
     var temp = [];

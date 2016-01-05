@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
@@ -51,6 +50,7 @@ public class Statistic {
         }
         return map;
     }
+
     public static Map<String, List> getGasNetworkPoints(String year, String companies) {
         String query = "call getNetwork(?, ?, 'GAS');";
         List usages = em.createNativeQuery(query)
@@ -69,6 +69,17 @@ public class Statistic {
             } else {
                 map.put(_arr[0].toString(), new ArrayList());
                 map.get(_arr[0].toString()).add(_arr[1].toString());
+            }
+
+        }
+        for (Map.Entry<String, List> entrySet : map.entrySet()) {
+            String key = entrySet.getKey();
+            List value = entrySet.getValue();
+            for (Object v : value) {
+                if (v.toString().equals("00")) {
+                    value.remove(v);
+                    break;
+                }
             }
 
         }
@@ -173,262 +184,262 @@ public class Statistic {
     }
 
     /*
-    public static long getElkUsage(String postalcode, String year) throws NumberFormatException{
-    	long usage = -1;
+     public static long getElkUsage(String postalcode, String year) throws NumberFormatException{
+     long usage = -1;
     	
-    	String query = "select sum(sjv) from kleinverbruik where productsoort = 'ELK' "
-    			+ "and (postcode_tot like ? or postcode_van like ?) "
-    					+ "and jaar = ?;";
-    	usage = Long.parseLong(em.createNativeQuery(query)
-    			.setParameter(1, postalcode + "%")
-    			.setParameter(2, postalcode + "%")
-    			.setParameter(3, year)
-    			.getSingleResult()
-    			.toString());
+     String query = "select sum(sjv) from kleinverbruik where productsoort = 'ELK' "
+     + "and (postcode_tot like ? or postcode_van like ?) "
+     + "and jaar = ?;";
+     usage = Long.parseLong(em.createNativeQuery(query)
+     .setParameter(1, postalcode + "%")
+     .setParameter(2, postalcode + "%")
+     .setParameter(3, year)
+     .getSingleResult()
+     .toString());
     	
-    	return usage;
-    }
+     return usage;
+     }
     
-    public static long getGasUsage(String postalcode, String year) throws NumberFormatException{
-    	long usage = -1;
+     public static long getGasUsage(String postalcode, String year) throws NumberFormatException{
+     long usage = -1;
     	
-    	String query = "select sum(sjv) from kleinverbruik where productsoort = 'GAS' "
-    			+ "and (postcode_tot like ? or postcode_van like ?) "
-    					+ "and jaar = ?;";
-    	usage = Long.parseLong(em.createNativeQuery(query)
-    			.setParameter(1, postalcode + "%")
-    			.setParameter(2, postalcode + "%")
-    			.setParameter(3, year)
-    			.getSingleResult()
-    			.toString());
+     String query = "select sum(sjv) from kleinverbruik where productsoort = 'GAS' "
+     + "and (postcode_tot like ? or postcode_van like ?) "
+     + "and jaar = ?;";
+     usage = Long.parseLong(em.createNativeQuery(query)
+     .setParameter(1, postalcode + "%")
+     .setParameter(2, postalcode + "%")
+     .setParameter(3, year)
+     .getSingleResult()
+     .toString());
     	
-    	return usage;
-    }
+     return usage;
+     }
     
-    public static long getElkRangeByYear(String year) throws NumberFormatException{
-    	long usage = -1;
+     public static long getElkRangeByYear(String year) throws NumberFormatException{
+     long usage = -1;
     	
-    	String query = "select sum(sjv) from kleinverbruik where productsoort = 'ELK' "
-    					+ "and jaar = ?;";
-    	usage = Long.parseLong(em.createNativeQuery(query)
-    			.setParameter(1, year)
-    			.getSingleResult()
-    			.toString());
-    	AMOUNT_OF_AVAILABLE_POSTALCODES = getElkUsageHashListByYear(year).size();
-    	long range = usage/AMOUNT_OF_AVAILABLE_POSTALCODES/AMOUNT_OF_RANGES;
-    	return range;
-    }
+     String query = "select sum(sjv) from kleinverbruik where productsoort = 'ELK' "
+     + "and jaar = ?;";
+     usage = Long.parseLong(em.createNativeQuery(query)
+     .setParameter(1, year)
+     .getSingleResult()
+     .toString());
+     AMOUNT_OF_AVAILABLE_POSTALCODES = getElkUsageHashListByYear(year).size();
+     long range = usage/AMOUNT_OF_AVAILABLE_POSTALCODES/AMOUNT_OF_RANGES;
+     return range;
+     }
     
-    public static long getElkUsageByCompany(String company, String postalcode){
-    	long usage = -1;
+     public static long getElkUsageByCompany(String company, String postalcode){
+     long usage = -1;
     	
-    	String query = "select sum(sjv) from kleinverbruik where productsoort = 'ELK' " + 
-    			"and lower(netbeheerder) like ? and (postcode_van like ? or postcode_tot like ?);";
-    	usage = Long.parseLong(em.createNativeQuery(query)
-    			.setParameter(1, '%'+company.toLowerCase()+'%')
-    			.setParameter(2, postalcode + "%")
-    			.setParameter(3, postalcode + "%")
-    			.getSingleResult().toString());
+     String query = "select sum(sjv) from kleinverbruik where productsoort = 'ELK' " + 
+     "and lower(netbeheerder) like ? and (postcode_van like ? or postcode_tot like ?);";
+     usage = Long.parseLong(em.createNativeQuery(query)
+     .setParameter(1, '%'+company.toLowerCase()+'%')
+     .setParameter(2, postalcode + "%")
+     .setParameter(3, postalcode + "%")
+     .getSingleResult().toString());
     	
-    	return usage;
-    }
+     return usage;
+     }
     
-    public static long getElkUsageByCompany(String company, String year, String postalcode){
-    	long usage = -1;
+     public static long getElkUsageByCompany(String company, String year, String postalcode){
+     long usage = -1;
 
-		String query = "select sum(sjv) from kleinverbruik where productsoort = 'ELK' " + 
-		"and jaar = ? and lower(netbeheerder) like ? and (postcode_van like ? or postcode_tot like ?);";
-		usage = Long.parseLong(em.createNativeQuery(query)
-				.setParameter(1, year)
-				.setParameter(2, '%'+company.toLowerCase()+'%')
-				.setParameter(3, postalcode + "%")
-				.setParameter(4, postalcode + "%")
-				.getSingleResult().toString());
+     String query = "select sum(sjv) from kleinverbruik where productsoort = 'ELK' " + 
+     "and jaar = ? and lower(netbeheerder) like ? and (postcode_van like ? or postcode_tot like ?);";
+     usage = Long.parseLong(em.createNativeQuery(query)
+     .setParameter(1, year)
+     .setParameter(2, '%'+company.toLowerCase()+'%')
+     .setParameter(3, postalcode + "%")
+     .setParameter(4, postalcode + "%")
+     .getSingleResult().toString());
 		
-		return usage;
-    }
+     return usage;
+     }
 
-    public static long getGasUsageByCompany(String company, String postalcode){
-    	long usage = -1;
+     public static long getGasUsageByCompany(String company, String postalcode){
+     long usage = -1;
 
-		String query = "select sum(sjv) from kleinverbruik where productsoort = 'GAS' " + 
-		"lower(netbeheerder) like ? and (postcode_van like ? or postcode_tot like ?);";
-		usage = Long.parseLong(em.createNativeQuery(query)
-				.setParameter(1, '%'+company.toLowerCase()+'%')
-				.setParameter(2, postalcode + "%")
-				.setParameter(3, postalcode + "%")
-				.getSingleResult().toString());
+     String query = "select sum(sjv) from kleinverbruik where productsoort = 'GAS' " + 
+     "lower(netbeheerder) like ? and (postcode_van like ? or postcode_tot like ?);";
+     usage = Long.parseLong(em.createNativeQuery(query)
+     .setParameter(1, '%'+company.toLowerCase()+'%')
+     .setParameter(2, postalcode + "%")
+     .setParameter(3, postalcode + "%")
+     .getSingleResult().toString());
 		
-		return usage;
-    }
+     return usage;
+     }
     
-    public static long getGasUsageByCompany(String company, String year, String postalcode){
-    	long usage = -1;
+     public static long getGasUsageByCompany(String company, String year, String postalcode){
+     long usage = -1;
 
-		String query = "select sum(sjv) from kleinverbruik where productsoort = 'GAS' " + 
-		"and jaar = ? and lower(netbeheerder) like ? and (postcode_van like ? or postcode_tot like ?);";
-		usage = Long.parseLong(em.createNativeQuery(query)
-				.setParameter(1, year)
-				.setParameter(2, '%'+company.toLowerCase()+'%')
-				.setParameter(3, postalcode + "%")
-				.setParameter(4, postalcode + "%")
-				.getSingleResult().toString());
+     String query = "select sum(sjv) from kleinverbruik where productsoort = 'GAS' " + 
+     "and jaar = ? and lower(netbeheerder) like ? and (postcode_van like ? or postcode_tot like ?);";
+     usage = Long.parseLong(em.createNativeQuery(query)
+     .setParameter(1, year)
+     .setParameter(2, '%'+company.toLowerCase()+'%')
+     .setParameter(3, postalcode + "%")
+     .setParameter(4, postalcode + "%")
+     .getSingleResult().toString());
 		
-		return usage;
-    }
+     return usage;
+     }
     
-    public static Map<String, Long> getElkUsageHashList(){
-    	Map<String, Long> usages = new HashMap<>();
-    	for(int i = 10; i < 100; i++){
-    		long _usage = 0;
-    		try{
-    			//_usage = getElkUsage(""+i);
-    			usages.put(""+i, _usage);
-    		}catch(Exception e){
-    			//no record for this postal code
-    		}
-    	}
+     public static Map<String, Long> getElkUsageHashList(){
+     Map<String, Long> usages = new HashMap<>();
+     for(int i = 10; i < 100; i++){
+     long _usage = 0;
+     try{
+     //_usage = getElkUsage(""+i);
+     usages.put(""+i, _usage);
+     }catch(Exception e){
+     //no record for this postal code
+     }
+     }
     	
-    	return usages;
-    }
+     return usages;
+     }
     
-    public static Map<String, Long> getGasUsageHashList(){
-    	Map<String, Long> usages = new HashMap<>();
-    	for(int i = 10; i < 100; i++){
-    		long _usage = 0;
-    		try{
-    			_usage = getGasUsage(""+i);
-    			usages.put(""+i, _usage);
-    		}catch(Exception e){
-    			//no record for this postal code
-    		}
-    	}
+     public static Map<String, Long> getGasUsageHashList(){
+     Map<String, Long> usages = new HashMap<>();
+     for(int i = 10; i < 100; i++){
+     long _usage = 0;
+     try{
+     _usage = getGasUsage(""+i);
+     usages.put(""+i, _usage);
+     }catch(Exception e){
+     //no record for this postal code
+     }
+     }
     	
-    	return usages;
-    }
+     return usages;
+     }
     
-    public static Map<String, Long> getElkUsageHashListByYear(String year){
-    	Map<String, Long> usages = new HashMap<>();
-    	for(int i = 10; i < 100; i++){
-    		long _usage = 0;
-    		try{
-    			_usage = getElkUsage(""+i, year);
-    			usages.put(""+i, _usage);
-    		}catch(Exception e){
-    			//no record for this postal code
-    		}
-    	}
+     public static Map<String, Long> getElkUsageHashListByYear(String year){
+     Map<String, Long> usages = new HashMap<>();
+     for(int i = 10; i < 100; i++){
+     long _usage = 0;
+     try{
+     _usage = getElkUsage(""+i, year);
+     usages.put(""+i, _usage);
+     }catch(Exception e){
+     //no record for this postal code
+     }
+     }
     	
-    	return usages;
-    }
+     return usages;
+     }
     
-    public static Map<String, Long> getGasUsageHashListByYear(String year){
-    	Map<String, Long> usages = new HashMap<>();
-    	for(int i = 10; i < 100; i++){
-    		long _usage = 0;
-    		try{
-    			_usage = getGasUsage(""+i, year);
-    			usages.put(""+i, _usage);
-    		}catch(Exception e){
-    			//no record for this postal code
-    		}
-    	}
+     public static Map<String, Long> getGasUsageHashListByYear(String year){
+     Map<String, Long> usages = new HashMap<>();
+     for(int i = 10; i < 100; i++){
+     long _usage = 0;
+     try{
+     _usage = getGasUsage(""+i, year);
+     usages.put(""+i, _usage);
+     }catch(Exception e){
+     //no record for this postal code
+     }
+     }
     	
-    	return usages;
-    }
+     return usages;
+     }
     
-    public static Map<String, Long> getElkUsageHashListByCompany(String company){
-    	Map<String, Long> usages = new HashMap<>();
-    	for(int i = 10; i < 100; i++){
-    		long _usage = 0;
-    		try{
-    			_usage = getElkUsageByCompany(company, ""+i);
-    			usages.put(""+i, _usage);
-    		}catch(Exception e){
-    			//no record for this postal code
-    		}
-    	}
+     public static Map<String, Long> getElkUsageHashListByCompany(String company){
+     Map<String, Long> usages = new HashMap<>();
+     for(int i = 10; i < 100; i++){
+     long _usage = 0;
+     try{
+     _usage = getElkUsageByCompany(company, ""+i);
+     usages.put(""+i, _usage);
+     }catch(Exception e){
+     //no record for this postal code
+     }
+     }
     	
-    	return usages;
-    }
+     return usages;
+     }
     
-    public static Map<String, Long> getElkUsageHashListByCompany(String company, String year){
-    	Map<String, Long> usages = new HashMap<>();
-    	for(int i = 10; i < 100; i++){
-    		long _usage = 0;
-    		try{
-    			_usage = getElkUsageByCompany(company, year, ""+i);
-    			usages.put(""+i, _usage);
-    		}catch(Exception e){
-    			//no record for this postal code
-    		}
-    	}
+     public static Map<String, Long> getElkUsageHashListByCompany(String company, String year){
+     Map<String, Long> usages = new HashMap<>();
+     for(int i = 10; i < 100; i++){
+     long _usage = 0;
+     try{
+     _usage = getElkUsageByCompany(company, year, ""+i);
+     usages.put(""+i, _usage);
+     }catch(Exception e){
+     //no record for this postal code
+     }
+     }
     	
-    	return usages;
-    }
+     return usages;
+     }
     
-    public static Map<String, Long> getGasUsageHashListByCompany(String company){
-    	Map<String, Long> usages = new HashMap<>();
-    	for(int i = 10; i < 100; i++){
-    		long _usage = 0;
-    		try{
-    			_usage = getGasUsageByCompany(company, ""+i);
-    			usages.put(""+i, _usage);
-    		}catch(Exception e){
-    			//no record for this postal code
-    		}
-    	}
+     public static Map<String, Long> getGasUsageHashListByCompany(String company){
+     Map<String, Long> usages = new HashMap<>();
+     for(int i = 10; i < 100; i++){
+     long _usage = 0;
+     try{
+     _usage = getGasUsageByCompany(company, ""+i);
+     usages.put(""+i, _usage);
+     }catch(Exception e){
+     //no record for this postal code
+     }
+     }
     	
-    	return usages;
-    }
+     return usages;
+     }
     
-    public static Map<String, Long> getGasUsageHashListByCompany(String company, String year){
-    	Map<String, Long> usages = new HashMap<>();
-    	for(int i = 10; i < 100; i++){
-    		long _usage = 0;
-    		try{
-    			_usage = getGasUsageByCompany(company, year, ""+i);
-    			usages.put(""+i, _usage);
-    		}catch(Exception e){
-    			//no record for this postal code
-    		}
-    	}
+     public static Map<String, Long> getGasUsageHashListByCompany(String company, String year){
+     Map<String, Long> usages = new HashMap<>();
+     for(int i = 10; i < 100; i++){
+     long _usage = 0;
+     try{
+     _usage = getGasUsageByCompany(company, year, ""+i);
+     usages.put(""+i, _usage);
+     }catch(Exception e){
+     //no record for this postal code
+     }
+     }
     	
-    	return usages;
-    }
+     return usages;
+     }
     
-    public static Map<String, String> getElkUsageRangeList(String year){
-    	Map<String, String> ranges = new HashMap<>();
+     public static Map<String, String> getElkUsageRangeList(String year){
+     Map<String, String> ranges = new HashMap<>();
     	
-    	//get range
-    	final long range = getElkRangeByYear(year);
-    	//get usages
-    	Map<String, Long> usages = new HashMap<>();
-		usages= getElkUsageHashListByYear(year);
-		String _ret = "";
-		Iterator it = usages.entrySet().iterator();
-		while(it.hasNext()){
-			Map.Entry pair = (Map.Entry)it.next();
-			String _range = "";
-			long _usage = (long)pair.getValue();
-			if(_usage == 0){
-				_range = "0";
-			}
-			else if(_usage > 0 && _usage < range){
-				_range = "1";
-			}else if (_usage > range && _usage < (2*range)){
-				_range = "2";
-			}else{
-				_range = "3";
-			}
-	        _ret += pair.getKey() + " = " + pair.getValue() + " <br>";
-	        it.remove(); // avoids a ConcurrentModificationException
+     //get range
+     final long range = getElkRangeByYear(year);
+     //get usages
+     Map<String, Long> usages = new HashMap<>();
+     usages= getElkUsageHashListByYear(year);
+     String _ret = "";
+     Iterator it = usages.entrySet().iterator();
+     while(it.hasNext()){
+     Map.Entry pair = (Map.Entry)it.next();
+     String _range = "";
+     long _usage = (long)pair.getValue();
+     if(_usage == 0){
+     _range = "0";
+     }
+     else if(_usage > 0 && _usage < range){
+     _range = "1";
+     }else if (_usage > range && _usage < (2*range)){
+     _range = "2";
+     }else{
+     _range = "3";
+     }
+     _ret += pair.getKey() + " = " + pair.getValue() + " <br>";
+     it.remove(); // avoids a ConcurrentModificationException
 	        
-	        ranges.put(pair.getKey().toString(), _range);
-		}
+     ranges.put(pair.getKey().toString(), _range);
+     }
     	
-    	return ranges;
-    }
+     return ranges;
+     }
     
      */
 }
