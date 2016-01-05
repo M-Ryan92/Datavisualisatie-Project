@@ -216,12 +216,11 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             //change the main array points should de drawn as last
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
 
-//            for (var companyNetwork in self.networkPoints) {
-                var companyNetwork = "Liander";
+            for (var companyNetwork in self.networkPoints) {
                 drawHelper.drawNetwork(drawHelper.formatNpList(self.networkPoints[companyNetwork]), geoPointList, lineColors[companyNetwork]).forEach(function(l){
                     nld.features.push(l);
                 });
-//            };
+            };
 
             //add points back into the main array
             temp.forEach(function (item) {

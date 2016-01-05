@@ -50,7 +50,7 @@ drawHelper.drawNetwork = function (np, geoPointList, col) {
         grouppoints = [];
     });
     groups = temp;
-    
+
     groups.forEach(function (g) {
         drawHelper.bindGroup(g.slice(0), col).forEach(function (line) {
             lineArray.push(line);
@@ -66,18 +66,25 @@ drawHelper.drawNetwork = function (np, geoPointList, col) {
 
 drawHelper.getGroupConnections = function (groups, col) {
     var lines = [];
-    var group = groups.shift();
     var res;
-
+    var groupIndex;
     groups.forEach(function (g) {
-        var t = drawHelper.getClosestPoint(group, g);
-        if(res === undefined || res.distance > t.distance){
-            res = t;
+        if (groups.indexOf(g) > 0) {
+            var t = drawHelper.getClosestPoint(groups[0], g);
+            if (res === undefined || res.distance > t.distance) {
+                res = t;
+                groupIndex = groups.indexOf(g);
+            }
         }
     });
+    
+    groups[0] = groups[0].concat(groups[groupIndex]);
+    groups.splice(groupIndex, 1);
     lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col));
+    res = undefined;
+    
     if (groups.length > 1) {
-        drawHelper.getGroupConnections(groups, col).forEach(function(l){
+        drawHelper.getGroupConnections(groups, col).forEach(function (l) {
             lines.push(l);
         });
     }
