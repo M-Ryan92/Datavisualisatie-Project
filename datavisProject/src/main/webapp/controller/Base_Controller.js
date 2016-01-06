@@ -208,12 +208,12 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             var last = null;
             var next = null;
             var lineColors = {};
-            lineColors.Endinet = "#ffa64d";//orange
-            lineColors.Enexis = "#9966ff";//pink/purple
-            lineColors.Liander = "#d9ff66";//green
+            lineColors.Endinet = "#FF8C00";// orange
+            lineColors.Enexis = "#FF004D";// pink/purple
+            lineColors.Liander = "#AAFF00";// green
 
             var temp = nld.features.filter(item => item.geometry.type === "Point");
-            //change the main array points should de drawn as last
+            // change the main array points should de drawn as last
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
 
             var lines = [];
@@ -226,18 +226,15 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             
             console.log("lines", lines);
             
-/*          
+/*
  * 
- *   lines0 -> 0 en 1
- *   0,1 -> x en y
- *   lines1 compare to lines0
- *   
- *   3 overeenkomsten
- *   line size / aantal overeenkomsten
- *   
+ * lines0 -> 0 en 1 0,1 -> x en y lines1 compare to lines0
+ * 
+ * 3 overeenkomsten line size / aantal overeenkomsten
+ * 
  */
-            //ines[0].geometry.coordinates[0]   eerste punt
-            //lines[0].properties.lineid
+            // ines[0].geometry.coordinates[0] eerste punt
+            // lines[0].properties.lineid
             
             console.log("lines[0]", lines[0].properties.lineid);
             
@@ -256,18 +253,29 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             				
             				console.log("l", l);
             				console.log("l2", l2);
-            				l.properties.color = "red";
-            				l2.properties.color = "black";
+//            				l.properties.color = "red";
+//            				l2.properties.color = "black";
             				
-            					l.geometry.coordinates[0][0] += 0.003;
-                				//l.geometry.coordinates[0][1] += 0.003;
-                				l.geometry.coordinates[1][0] += 0.003;
-                				//l.geometry.coordinates[1][1] += 0.003;
+            				l.geometry.coordinates[0][0] += 0.003;
+                				// l.geometry.coordinates[0][1] += 0.003;
+                			l.geometry.coordinates[1][0] += 0.003;
+                				// l.geometry.coordinates[1][1] += 0.003;
                 				
+                			l2.geometry.coordinates[0][0] -= 0.003;
+                				// l2.geometry.coordinates[0][1] -= 0.003;
+                			l2.geometry.coordinates[1][0] -= 0.003;
+                				// l2.geometry.coordinates[1][1] -= 0.003;
+                			
+                			if(-1.4 > (l.geometry.coordinates[0][1]- l.geometry.coordinates[1][1])< 1.4){
+                				l.geometry.coordinates[0][0] += 0.002;
+                				l.geometry.coordinates[1][0] += 0.002;
                 				l2.geometry.coordinates[0][0] -= 0.003;
-                				//l2.geometry.coordinates[0][1] -= 0.003;
                 				l2.geometry.coordinates[1][0] -= 0.003;
-                				//l2.geometry.coordinates[1][1] -= 0.003;
+                			}
+                			if(-1.4 > (l.geometry.coordinates[0][0]- l.geometry.coordinates[1][0])< 1.4){
+                				l.geometry.coordinates[0][1] += 0.003;
+                				l.geometry.coordinates[1][1] += 0.003;
+                			}
             				
             				
             			}
@@ -277,7 +285,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
            
             
             
-            //add points back into the main array
+            // add points back into the main array
             temp.forEach(function (item) {
                 nld.features.push(item);
             });
@@ -320,7 +328,9 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
 
         var drag = d3.behavior.drag()
                 .on("dragstart", function () {
-                    // Adapted from http://mbostock.github.io/d3/talk/20111018/azimuthal.html and updated for d3 v3
+                    // Adapted from
+					// http://mbostock.github.io/d3/talk/20111018/azimuthal.html
+					// and updated for d3 v3
                     var proj = projection.rotate();
                     m0 = [d3.event.sourceEvent.pageX, d3.event.sourceEvent.pageY];
                     o0 = [-proj[0], -proj[1]];
