@@ -217,7 +217,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
 
             for (var companyNetwork in self.networkPoints) {
-                drawHelper.drawNetwork(drawHelper.formatNpList(self.networkPoints[companyNetwork]), geoPointList, lineColors[companyNetwork]).forEach(function(l){
+                drawHelper.drawNetwork(drawHelper.formatNpList(self.networkPoints[companyNetwork]), geoPointList, lineColors[companyNetwork], companyNetwork).forEach(function(l){
                     nld.features.push(l);
                 });
             };

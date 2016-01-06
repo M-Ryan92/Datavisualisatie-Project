@@ -1,10 +1,14 @@
 var lineString = {};
 
-lineString.makeFeature = function (s, e, c) {
+lineString.makeFeature = function (s, e, c, id) {
     var feature = {};
     feature.type = "Feature";
     feature.properties = {};
     feature.properties.color = c;
+
+    if (id !== undefined) {
+        feature.properties.lineid = id;
+    }
 
     feature.geometry = {};
     feature.geometry.type = "LineString";
@@ -17,6 +21,7 @@ lineString.makeFeature = function (s, e, c) {
 
 lineString.p;
 lineString.id = function () {
+    return lineString.p.properties.lineid;
 };
 
 lineString.fill = function (func, usage) {

@@ -11,8 +11,9 @@ drawHelper.formatNpList = function (np) {
     });
     return newNpList;
 };
-
-drawHelper.drawNetwork = function (np, geoPointList, col) {    
+drawHelper.companyName;
+drawHelper.drawNetwork = function (np, geoPointList, col, companyName) {    
+    drawHelper.companyName = companyName;
     var lineArray = [];
     if(np.length <= 0){
         return lineArray;
@@ -60,7 +61,7 @@ drawHelper.getGroupConnections = function (groups, col) {
     
     groups[0] = groups[0].concat(groups[groupIndex]);
     groups.splice(groupIndex, 1);
-    lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col));
+    lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col, drawHelper.companyName));
     res = undefined;
     
     if (groups.length > 1) {
@@ -97,7 +98,7 @@ drawHelper.bindGroups = function (groups, geoPointList, col) {
                 console.log("res,", res);
             }
         });
-        lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col));
+        lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col, drawHelper.companyName));
 
     }
     if (groups.length > 1) {
@@ -113,7 +114,7 @@ drawHelper.bindGroup = function (group, col) {
 
     if (group.length !== 0) {
         var res = drawHelper.getClosestPoint([point], group);
-        lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col));
+        lines.push(lineString.makeFeature([res.from[0], res.from[1]], [res.to[0], res.to[1]], col, drawHelper.companyName));
     }
 
     if (group.length > 1) {
