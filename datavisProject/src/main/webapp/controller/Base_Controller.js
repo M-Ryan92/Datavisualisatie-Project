@@ -216,12 +216,67 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             //change the main array points should de drawn as last
             nld.features = nld.features.filter(item => item.geometry.type !== "Point");
 
+            var lines = [];
             for (var companyNetwork in self.networkPoints) {
                 drawHelper.drawNetwork(drawHelper.formatNpList(self.networkPoints[companyNetwork]), geoPointList, lineColors[companyNetwork], companyNetwork).forEach(function(l){
-                    nld.features.push(l);
+                	nld.features.push(l);
+                	lines.push(l);
                 });
             };
-
+            
+            console.log("lines", lines);
+            
+/*          
+ * 
+ *   lines0 -> 0 en 1
+ *   0,1 -> x en y
+ *   lines1 compare to lines0
+ *   
+ *   3 overeenkomsten
+ *   line size / aantal overeenkomsten
+ *   
+ */
+            //ines[0].geometry.coordinates[0]   eerste punt
+            //lines[0].properties.lineid
+            
+            console.log("lines[0]", lines[0].properties.lineid);
+            
+            var equals = [];
+            
+            lines.forEach(function(l){
+            	lines.forEach(function(l2){
+            		if(l.properties.lineid !== l2.properties.lineid ){
+            			var p1 = l.geometry.coordinates[0];
+            			var p2 = l.geometry.coordinates[1];
+            			var p3 = l2.geometry.coordinates[0];
+            			var p4 = l2.geometry.coordinates[1];
+            			if((p1[0] === p3[0] && p1[1] === p3[1]) && (p2[0] === p4[0] && p2[1] === p4[1])
+            					||
+            				(p1[0] === p4[0] && p1[1] === p4[1]) && (p2[0] === p3[0] && p2[1] === p3[1])){
+            				
+            				console.log("l", l);
+            				console.log("l2", l2);
+            				l.properties.color = "red";
+            				l2.properties.color = "black";
+            				
+            					l.geometry.coordinates[0][0] += 0.003;
+                				//l.geometry.coordinates[0][1] += 0.003;
+                				l.geometry.coordinates[1][0] += 0.003;
+                				//l.geometry.coordinates[1][1] += 0.003;
+                				
+                				l2.geometry.coordinates[0][0] -= 0.003;
+                				//l2.geometry.coordinates[0][1] -= 0.003;
+                				l2.geometry.coordinates[1][0] -= 0.003;
+                				//l2.geometry.coordinates[1][1] -= 0.003;
+            				
+            				
+            			}
+            		}
+            	});
+            });
+           
+            
+            
             //add points back into the main array
             temp.forEach(function (item) {
                 nld.features.push(item);
