@@ -17,9 +17,13 @@ public class Statistic {
 
     }
 
-    public static int getMaxElkUsage() {
-        String query = "call getMaxUsage('ELK');";
-        return ((BigDecimal) em.createNativeQuery(query).getResultList().get(0)).intValue();
+    public static String getMaxElkUsage(String type, String year) {
+    	type = type.toUpperCase();
+        String query = "call getMaxUsage(?, ?);";
+        String result = em.createNativeQuery(query)
+        		.setParameter(1, type)
+        		.setParameter(2, year).getSingleResult().toString();
+        return result;
     }
 
     public static int getMaxGasUsage() {

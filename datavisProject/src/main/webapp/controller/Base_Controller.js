@@ -10,11 +10,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
     var t = d3.select("h1").node().getBoundingClientRect();
     var m = 30 + 20;
     var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - h.height - f.height - t.height - m;
-
-    var color = d3.scale.quantize()
-            .domain([0, 30000000, 80000000, 120000000, 160000000])
-            .range(["#87CEEB", "#00BFFF", "#4682B4", "#0000FF", "#000080"]);
-
+    
     self.scale = 5400;
 
     $scope.canceler = null;
@@ -97,8 +93,54 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             console.log("oh no it went wong -.-! yearchange");
             d3.select(".spinner").remove();
         });
+        self.requestMaxUsage();
     };
+    
+    self.requestMaxUsage = function () {
+    	var _year = $scope.selected_years.toString();
+    	if(_year == ""){
+    		_year = "0";
+    	}
+    	$http({
+            method: 'GET',
+            url: 'resources/data/max/'+$scope.type+'/'+_year
+        }).then(function successCallback(response) {
+        	var domains = new Array();
+            var maxUsage = response.data;
+            console.log("maxUsage", maxUsage);
+            var _range = maxUsage/4;
+            for(var i = 0; i < 5 ; i++){
+            	domains.push(_range*i);
+            }
+            color = d3.scale.quantize()
+            .domain(domains)
+            .range(["#87CEEB", "#00BFFF", "#4682B4", "#0000FF", "#000080"]);
+            
+            var legend = d3.legend.color()
+                    .title("Usage (in sjv)")
+                    .labelFormat(function (d) {
+                        if (d >= 1e6) {
+                            return (d / 1e6).toFixed(1) + "M";
+                        }
+                        if (d >= 1e3) {
+                            return (d / 1e3).toFixed(1) + "K";
+                        }
+                        return d;
+                    })
+                    .useClass(false)
+                    .scale(color);
 
+            d3.select("svg.legend").attr("height", 120).call(legend);
+            d3.select("svg.legend .legendTitle").attr("transform", "translate(0,15)");
+            d3.selectAll(".legend text").attr("font-weight", "700").attr("fill", "blanchedalmond");
+            d3.selectAll(".legendCells .cell>.swatch")
+                    .style("stroke", "blanchedalmond")
+                    .style("stroke-width", 1);
+        }, function errorCallback(response) {
+            console.log("oh no it went wong -.-! maxusage", response);
+        });
+    }
+    
     $scope.onYearChange = function (year) {
         if (year.length === 0) {
             year = '0';
@@ -153,27 +195,7 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                 $scope.onYearChange($scope.selected_years);
             }
         });
-
-        var legend = d3.legend.color()
-                .title("Usage (in sjv)")
-                .labelFormat(function (d) {
-                    if (d >= 1e6) {
-                        return d / 1e6 + "M";
-                    }
-                    if (d >= 1e3) {
-                        return d / 1e3 + "K";
-                    }
-                    return d;
-                })
-                .useClass(false)
-                .scale(color);
-
-        d3.select("svg.legend").attr("height", 120).call(legend);
-        d3.select("svg.legend .legendTitle").attr("transform", "translate(0,15)");
-        d3.selectAll(".legend text").attr("font-weight", "700").attr("fill", "blanchedalmond");
-        d3.selectAll(".legendCells .cell>.swatch")
-                .style("stroke", "blanchedalmond")
-                .style("stroke-width", 1);
+        
     };
 
     self.draw = function () {
@@ -224,20 +246,6 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
                 });
             };
             
-            console.log("lines", lines);
-            
-/*
- * 
- * lines0 -> 0 en 1 0,1 -> x en y lines1 compare to lines0
- * 
- * 3 overeenkomsten line size / aantal overeenkomsten
- * 
- */
-            // ines[0].geometry.coordinates[0] eerste punt
-            // lines[0].properties.lineid
-            
-            console.log("lines[0]", lines[0].properties.lineid);
-            
             var equals = [];
             
             lines.forEach(function(l){
@@ -250,11 +258,6 @@ app.registerCtrl('ExampleController', function ($scope, $http, $q) {
             			if((p1[0] === p3[0] && p1[1] === p3[1]) && (p2[0] === p4[0] && p2[1] === p4[1])
             					||
             				(p1[0] === p4[0] && p1[1] === p4[1]) && (p2[0] === p3[0] && p2[1] === p3[1])){
-            				
-            				console.log("l", l);
-            				console.log("l2", l2);
-//            				l.properties.color = "red";
-//            				l2.properties.color = "black";
             				
             				l.geometry.coordinates[0][0] += 0.003;
                 				// l.geometry.coordinates[0][1] += 0.003;
